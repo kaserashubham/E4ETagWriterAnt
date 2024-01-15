@@ -4,6 +4,9 @@
  */
 package e4etagwriter;
 
+import com.fazecast.jSerialComm.SerialPort;
+import java.util.Scanner;
+
 /**
  *
  * @author shubham
@@ -48,6 +51,11 @@ public class EditTagPage extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Write");
 
@@ -84,6 +92,39 @@ public class EditTagPage extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        //just for testing jserialcomm library
+        SerialPort [] AvailablePorts = SerialPort.getCommPorts();
+        int i = 0;
+        int port_index = 0;
+        Scanner sc = new Scanner(System.in); 
+        for(SerialPort S : AvailablePorts)
+         {
+            
+            System.out.println("\n  "  + S.toString());
+            System.out.println(";Available Port[" + i + "]"  + AvailablePorts[i].toString());
+            i++;
+         }
+        SerialPort MySerialPort = AvailablePorts[port_index];
+        MySerialPort.openPort();
+                                 //Arduino May get reset 
+
+        if (MySerialPort.isOpen())//Check whether port open/not
+              System.out.println("is Open ");
+        else
+           System.out.println(" Port not open ");
+        System.out.print("\nPress 1 to close the port");
+             
+        i = sc.nextInt();
+        if(i == 1)
+        MySerialPort.closePort(); //Close the port
+
+      if (MySerialPort.isOpen())
+            System.out.println(" is Open ");
+        else
+            System.out.println("\n Port not open ");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
