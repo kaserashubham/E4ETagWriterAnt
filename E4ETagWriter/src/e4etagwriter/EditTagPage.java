@@ -116,7 +116,7 @@ public class EditTagPage extends javax.swing.JFrame {
            System.out.println(" Port not open ");
         System.out.print("\nPress 1 to close the port");
              
-        i = sc.nextInt();
+        //i = sc.nextInt();
         if(i == 1)
         MySerialPort.closePort(); //Close the port
 
