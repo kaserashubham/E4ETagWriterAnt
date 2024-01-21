@@ -116,6 +116,10 @@ public class EditTagPage extends javax.swing.JFrame {
             i++;
          }
         port_index = sc.nextInt();
+        if(port_index == -1)
+        {
+            return;
+        }
         SerialPort MySerialPort = AvailablePorts[port_index];
         MySerialPort.setComPortParameters(9600, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
         MySerialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 1000, 0);
