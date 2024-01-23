@@ -12,6 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Scanner;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -36,25 +37,22 @@ public class EditTagPage extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        vehicleListTable = new javax.swing.JTable();
         refreshBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        vehicleListTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Registration Number", "Max Fuel Limit"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(vehicleListTable);
 
         refreshBtn.setText("Refresh");
         refreshBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -107,6 +105,9 @@ public class EditTagPage extends javax.swing.JFrame {
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
         //just for testing jserialcomm library
         String vehicleListResp;
+        String[] regNo;
+        String[] maxFuelLimit;
+        int index = 0;
         try
         {
             HttpRequest getRequest = HttpRequest.newBuilder()
@@ -121,6 +122,35 @@ public class EditTagPage extends javax.swing.JFrame {
             
             System.out.print(getRequest);
             System.out.print(vehicleListResp);
+            
+            int noOfVehicle = 0;
+            /*while(vehicleListResp.charAt(index++) != '"');
+            index++;
+            
+            for(int i = 0;; i++)
+            {
+                if(vehicleListResp.charAt(index) == ',')
+                {
+                    
+                }
+            }*/
+            
+            for(int i = 0; i < vehicleListResp.length(); i++)
+            {
+                if(vehicleListResp.charAt(i) == ',')
+                {
+                    noOfVehicle++;
+                }
+            }
+            System.out.println("\nNumber of Vehicle : " + noOfVehicle);
+            String[] arrOfStr = vehicleListResp.split(",", noOfVehicle+1);
+            DefaultTableModel tblModel = (DefaultTableModel)vehicleListTable.getModel();
+            for (String a : arrOfStr)
+            {
+                Object[] data = {a,"1234"};
+                System.out.println(a);
+                tblModel.addRow(data);
+            }
         }
         catch(Exception e1) {
                 // TODO Auto-generated catch block
@@ -209,7 +239,7 @@ public class EditTagPage extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JButton refreshBtn;
+    private javax.swing.JTable vehicleListTable;
     // End of variables declaration//GEN-END:variables
 }
