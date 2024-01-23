@@ -4,6 +4,11 @@
  */
 package e4etagwriter;
 
+import java.net.URI;
+import java.net.http.*;
+import java.net.http.HttpResponse.*;
+import java.time.Duration;
+import javax.swing.JOptionPane;
 /**
  *
  * @author shubham
@@ -14,6 +19,7 @@ public class Login extends javax.swing.JFrame {
      * Creates new form Login
      */
     static LoginParameter lp = new LoginParameter();
+    HomePage hp = new HomePage();
     public Login() {
         initComponents();
     }
@@ -38,10 +44,6 @@ public class Login extends javax.swing.JFrame {
         jLabel1.setText("Username");
 
         jLabel2.setText("Password");
-
-        usernameTF.setText("jTextField1");
-
-        passwordTF.setText("jPasswordField1");
 
         loginBtn.setText("Login");
         loginBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -89,7 +91,50 @@ public class Login extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         // TODO add your handling code here:
+        HttpRequest getRequest;
+	HttpClient client;
+	HttpResponse<String> response;
         lp.setUsername(usernameTF.getText());
+        String loginResp;
+        try {
+            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
+            getRequest = HttpRequest.newBuilder()
+                .GET()
+                .timeout(Duration.ofSeconds(10))
+                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
+                .build();
+            client = HttpClient.newHttpClient();
+            response = client.send(getRequest, BodyHandlers.ofString());
+            loginResp = response.body();
+            //buff = loginResp.toCharArray();
+            
+            System.out.print(getRequest);
+            System.out.print(loginResp);
+            
+            if(loginResp.charAt(1) == '1')
+            {
+                    //connStatus = true;
+                    lp.setAccessToken(loginResp.substring(3,9));
+                    System.out.println(lp.getAccessToken());
+                    this.setVisible(false);
+                    hp.setVisible(true);
+                    //lbConnStatus.setText("Connected");
+                    //btnLogout.setEnabled(true);
+                    //btnLogin.setEnabled(false);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Invalid Credentials", 
+                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+                    //connStatus = false;
+                    //lbConnStatus.setText("Invalid");
+                    //btnLogout.setEnabled(false);
+            }
+
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     /**
