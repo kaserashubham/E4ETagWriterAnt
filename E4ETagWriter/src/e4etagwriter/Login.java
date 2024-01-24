@@ -4,6 +4,7 @@
  */
 package e4etagwriter;
 
+import static e4etagwriter.HomePage.hp;
 import java.net.URI;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
@@ -19,7 +20,7 @@ public class Login extends javax.swing.JFrame {
      * Creates new form Login
      */
     static LoginParameter lp = new LoginParameter();
-    HomePage hp = new HomePage();
+    //static HomePage hp = new HomePage();
     public Login() {
         initComponents();
     }
@@ -44,6 +45,8 @@ public class Login extends javax.swing.JFrame {
         jLabel1.setText("Username");
 
         jLabel2.setText("Password");
+
+        usernameTF.setText("support@e4engineer.in");
 
         loginBtn.setText("Login");
         loginBtn.addActionListener(new java.awt.event.ActionListener() {

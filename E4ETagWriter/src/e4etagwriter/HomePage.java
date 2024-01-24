@@ -4,6 +4,16 @@
  */
 package e4etagwriter;
 
+import static e4etagwriter.Login.lp;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import javax.swing.JFrame;
+
 /**
  *
  * @author shubham
@@ -14,6 +24,7 @@ public class HomePage extends javax.swing.JFrame {
      * Creates new form HomePage
      */
     EditTagPage etp = new EditTagPage();
+    static HomePage hp = new HomePage(); 
     public HomePage() {
         initComponents();
     }
@@ -30,7 +41,11 @@ public class HomePage extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         readWriteTagBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jButton1.setText("Configure");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -79,6 +94,31 @@ public class HomePage extends javax.swing.JFrame {
         etp.setVisible(true);
     }//GEN-LAST:event_readWriteTagBtnActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        System.out.println("Sending logout request");
+                try
+                {
+                    HttpRequest getRequest = HttpRequest.newBuilder()
+                            .GET()
+                            .timeout(Duration.ofSeconds(10))
+                            .uri(URI.create((lp.URL + lp.logoutRequest + lp.getAccessToken())))
+                            .build();
+                    HttpClient client = HttpClient.newHttpClient();
+                    System.out.println("logout request prepared");
+                    HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+                    String logoutResp = response.body();
+                    //buff = loginResp.toCharArray();
+
+                    System.out.print(getRequest);
+                    System.out.print(logoutResp);
+                }catch(Exception e)
+                {
+                    
+                }
+                System.out.println("Exiting from home page");
+    }//GEN-LAST:event_formWindowClosing
+
     /**
      * @param args the command line arguments
      */
@@ -106,13 +146,16 @@ public class HomePage extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new HomePage().setVisible(true);
+                hp.setVisible(true);
             }
         });
+
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
