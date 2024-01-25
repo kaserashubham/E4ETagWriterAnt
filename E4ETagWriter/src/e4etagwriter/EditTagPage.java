@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.table.DefaultTableModel;
 
@@ -105,8 +106,8 @@ public class EditTagPage extends javax.swing.JFrame {
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
         //just for testing jserialcomm library
         String vehicleListResp;
-        String[] regNo;
-        String[] maxFuelLimit;
+        char[] regNo = new char[11];
+        char[] maxFuelLimit = new char[5];
         int index = 0;
         try
         {
@@ -124,16 +125,7 @@ public class EditTagPage extends javax.swing.JFrame {
             System.out.print(vehicleListResp);
             
             int noOfVehicle = 0;
-            /*while(vehicleListResp.charAt(index++) != '"');
-            index++;
             
-            for(int i = 0;; i++)
-            {
-                if(vehicleListResp.charAt(index) == ',')
-                {
-                    
-                }
-            }*/
             
             for(int i = 0; i < vehicleListResp.length(); i++)
             {
@@ -142,15 +134,25 @@ public class EditTagPage extends javax.swing.JFrame {
                     noOfVehicle++;
                 }
             }
+            
             System.out.println("\nNumber of Vehicle : " + noOfVehicle);
-            String[] arrOfStr = vehicleListResp.split(",", noOfVehicle+1);
+            
             DefaultTableModel tblModel = (DefaultTableModel)vehicleListTable.getModel();
-            for (String a : arrOfStr)
+            char[] list = vehicleListResp.toCharArray();
+            while(list[index++] != '"');
+            
+            while(list[index] != '"')
             {
-                Object[] data = {a,"1234"};
-                System.out.println(a);
+                regNo = Arrays.copyOfRange(list, index, index + 10);
+                index += 10;
+                maxFuelLimit = Arrays.copyOfRange(list, index, index + 4);
+                index += 5;
+                System.out.println("index:" + index + " " + new String(regNo).replaceAll("@", "") + " " + new String(maxFuelLimit));
+                Object[] data = {new String(regNo).replaceAll("@", ""),Integer.valueOf(new String(maxFuelLimit))};
+                //System.out.println(a);
                 tblModel.addRow(data);
             }
+            
         }
         catch(Exception e1) {
                 // TODO Auto-generated catch block

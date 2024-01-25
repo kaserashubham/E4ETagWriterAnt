@@ -117,6 +117,7 @@ public class HomePage extends javax.swing.JFrame {
                     
                 }
                 System.out.println("Exiting from home page");
+                System.exit(0);
     }//GEN-LAST:event_formWindowClosing
 
     /**
