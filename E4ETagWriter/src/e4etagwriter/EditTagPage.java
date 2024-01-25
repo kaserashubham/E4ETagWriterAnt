@@ -138,6 +138,7 @@ public class EditTagPage extends javax.swing.JFrame {
             System.out.println("\nNumber of Vehicle : " + noOfVehicle);
             
             DefaultTableModel tblModel = (DefaultTableModel)vehicleListTable.getModel();
+            tblModel.setRowCount(0);
             char[] list = vehicleListResp.toCharArray();
             while(list[index++] != '"');
             
