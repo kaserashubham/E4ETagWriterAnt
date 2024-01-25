@@ -41,7 +41,7 @@ public class EditTagPage extends javax.swing.JFrame {
         vehicleListTable = new javax.swing.JTable();
         refreshBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        readBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -64,10 +64,10 @@ public class EditTagPage extends javax.swing.JFrame {
 
         jButton2.setText("Write");
 
-        jButton3.setText("Read");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        readBtn.setText("Read");
+        readBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                readBtnActionPerformed(evt);
             }
         });
 
@@ -81,7 +81,7 @@ public class EditTagPage extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(refreshBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
+                        .addComponent(readBtn)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -96,7 +96,7 @@ public class EditTagPage extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(refreshBtn)
                     .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(readBtn))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
 
@@ -161,46 +161,12 @@ public class EditTagPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        SerialPort [] AvailablePorts = SerialPort.getCommPorts();
-        int i = 0;
-        int port_index = 0;
-        Scanner sc = new Scanner(System.in); 
-        for(SerialPort S : AvailablePorts)
-         {
-            
-            System.out.println("\n  "  + S.toString());
-            System.out.println(";Available Port[" + i + "]"  + AvailablePorts[i].toString());
-            i++;
-         }
-        port_index = sc.nextInt();
-        if(port_index == -1)
-        {
-            return;
-        }
-        SerialPort MySerialPort = AvailablePorts[port_index];
-        MySerialPort.setComPortParameters(9600, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
-        MySerialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, 1000, 0);
-        MySerialPort.openPort();
-                                 //Arduino May get reset 
-
-        if (MySerialPort.isOpen())//Check whether port open/not
-        {
-            byte buff[] = new byte[10];
-            
-            System.out.println("is Open ");
-            MySerialPort.writeBytes(buff, 10);
-            
-            MySerialPort.closePort();
-            System.out.print("port close");
-            
-        }
-        else
-        {
-            System.out.println(" Port not open ");
-        }
+    private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
         
-    }//GEN-LAST:event_jButton3ActionPerformed
+        String regNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        String maxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
+        System.out.println("Selected Data : " + regNo + " " + maxFuelLimit);
+    }//GEN-LAST:event_readBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -240,8 +206,8 @@ public class EditTagPage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton readBtn;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JTable vehicleListTable;
     // End of variables declaration//GEN-END:variables
