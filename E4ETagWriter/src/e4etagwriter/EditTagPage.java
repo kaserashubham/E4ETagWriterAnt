@@ -5,6 +5,7 @@
 package e4etagwriter;
 
 import com.fazecast.jSerialComm.SerialPort;
+import static e4etagwriter.CommPortParameter.commPortParameter;
 import static e4etagwriter.Login.lp;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -40,7 +41,7 @@ public class EditTagPage extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         vehicleListTable = new javax.swing.JTable();
         refreshBtn = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        writeTagBtn = new javax.swing.JButton();
         readBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -62,7 +63,12 @@ public class EditTagPage extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Write");
+        writeTagBtn.setText("Write");
+        writeTagBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                writeTagBtnActionPerformed(evt);
+            }
+        });
 
         readBtn.setText("Read");
         readBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -83,7 +89,7 @@ public class EditTagPage extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(readBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2))
+                        .addComponent(writeTagBtn))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
@@ -95,7 +101,7 @@ public class EditTagPage extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(refreshBtn)
-                    .addComponent(jButton2)
+                    .addComponent(writeTagBtn)
                     .addComponent(readBtn))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
@@ -162,11 +168,24 @@ public class EditTagPage extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshBtnActionPerformed
 
     private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
+        byte[] buffer = new byte[10];
+        int length = 0;
+//buffer = {0xAA, 0x01, 0x00, 0x00, 0x55};
+        buffer[length++] = (byte) 0xAA;
+        buffer[length++] = (byte) 0x01;
+        buffer[length++] = (byte) 0x00;
+        buffer[length++] = (byte) 0x00;
+        buffer[length++] = (byte) 0x55;
+        commPortParameter.selectedPort.writeBytes(buffer, length);
         
+    }//GEN-LAST:event_readBtnActionPerformed
+
+    private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
+        // TODO add your handling code here:
         String regNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
         String maxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
         System.out.println("Selected Data : " + regNo + " " + maxFuelLimit);
-    }//GEN-LAST:event_readBtnActionPerformed
+    }//GEN-LAST:event_writeTagBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -205,10 +224,10 @@ public class EditTagPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton readBtn;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JTable vehicleListTable;
+    private javax.swing.JButton writeTagBtn;
     // End of variables declaration//GEN-END:variables
 }

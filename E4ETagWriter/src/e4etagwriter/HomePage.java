@@ -13,7 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import javax.swing.JFrame;
-
+import static e4etagwriter.ConfigPage.configPage;
 /**
  *
  * @author shubham
@@ -38,7 +38,7 @@ public class HomePage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        configureBtn = new javax.swing.JButton();
         readWriteTagBtn = new javax.swing.JButton();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -47,10 +47,10 @@ public class HomePage extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Configure");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        configureBtn.setText("Configure");
+        configureBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                configureBtnActionPerformed(evt);
             }
         });
 
@@ -67,7 +67,7 @@ public class HomePage extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(55, 55, 55)
-                .addComponent(jButton1)
+                .addComponent(configureBtn)
                 .addGap(68, 68, 68)
                 .addComponent(readWriteTagBtn)
                 .addContainerGap(65, Short.MAX_VALUE))
@@ -77,7 +77,7 @@ public class HomePage extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(77, 77, 77)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(configureBtn)
                     .addComponent(readWriteTagBtn))
                 .addContainerGap(196, Short.MAX_VALUE))
         );
@@ -85,9 +85,10 @@ public class HomePage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void configureBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        configPage.setVisible(true);
+    }//GEN-LAST:event_configureBtnActionPerformed
 
     private void readWriteTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readWriteTagBtnActionPerformed
         // TODO add your handling code here:
@@ -160,7 +161,7 @@ public class HomePage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton configureBtn;
     private javax.swing.JButton readWriteTagBtn;
     // End of variables declaration//GEN-END:variables
 }
