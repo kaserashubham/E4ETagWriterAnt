@@ -6,7 +6,7 @@
 package e4etagwriter;
 
 import com.fazecast.jSerialComm.SerialPort;
-import static e4etagwriter.CommPortParameter.*;
+import static e4etagwriter.SerialComm.*;
 import javax.swing.JOptionPane;
 /**
  *
@@ -115,7 +115,7 @@ public class ConfigPage extends javax.swing.JFrame {
         commPortParameter.selectedPort.openPort();
         if(commPortParameter.selectedPort.isOpen())
         {
-            //serialEventBasedReading(commPortParameter.selectedPort);
+            serialEventBasedReading(commPortParameter.selectedPort);
             dispose();
         }
         else

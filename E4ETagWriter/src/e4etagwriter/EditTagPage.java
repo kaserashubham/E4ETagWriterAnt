@@ -5,7 +5,7 @@
 package e4etagwriter;
 
 import com.fazecast.jSerialComm.SerialPort;
-import static e4etagwriter.CommPortParameter.commPortParameter;
+import static e4etagwriter.SerialComm.commPortParameter;
 import static e4etagwriter.Login.lp;
 import java.net.URI;
 import java.net.http.HttpClient;
