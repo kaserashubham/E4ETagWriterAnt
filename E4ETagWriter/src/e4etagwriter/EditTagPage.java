@@ -7,6 +7,9 @@ package e4etagwriter;
 import com.fazecast.jSerialComm.SerialPort;
 import static e4etagwriter.SerialComm.commPortParameter;
 import static e4etagwriter.Login.lp;
+import static e4etagwriter.SerialComm.dataLen;
+import static e4etagwriter.SerialComm.recvData;
+import static e4etagwriter.SerialComm.selectedPort;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -177,7 +180,30 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[length++] = (byte) 0x00;
         buffer[length++] = (byte) 0x55;
         commPortParameter.selectedPort.writeBytes(buffer, length);
-        
+        commPortParameter.dataLen = 0;
+        commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
+        if(commPortParameter.selectedPort.bytesAvailable() > 0)
+        {
+            int readLen = selectedPort.bytesAvailable();
+                //byte[] newData = new byte[readLen];
+                
+                //int len = selectedPort.readBytes(newData, readLen);
+                int len = selectedPort.readBytes(recvData, readLen);
+                //System.arraycopy(newData, 0, recvData, dataLen, readLen);
+                //dataLen += readLen;
+                
+                System.out.println();
+                System.out.println("data read blocking");
+                for(int i = 0; i < readLen; i++)
+                {
+                    System.out.print(String.format(" %02X", recvData[i]));
+                }
+                //now we can decode the complete data;
+        }
+        else
+        {
+            System.out.print("No data avl");
+        }
     }//GEN-LAST:event_readBtnActionPerformed
 
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed

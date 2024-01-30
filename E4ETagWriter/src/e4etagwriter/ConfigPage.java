@@ -110,12 +110,12 @@ public class ConfigPage extends javax.swing.JFrame {
         commPortParameter.selectedPort = commPortParameter.availablePorts[commPortCB.getSelectedIndex()];
         commPortParameter.baudRate = Integer.parseInt(baudRateCB.getSelectedItem().toString());
         commPortParameter.selectedPort.setComPortParameters(commPortParameter.baudRate,8,SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
-        commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
+        //commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
         
         commPortParameter.selectedPort.openPort();
         if(commPortParameter.selectedPort.isOpen())
         {
-            serialEventBasedReading(commPortParameter.selectedPort);
+            //serialEventBasedReading(commPortParameter.selectedPort);
             dispose();
         }
         else
