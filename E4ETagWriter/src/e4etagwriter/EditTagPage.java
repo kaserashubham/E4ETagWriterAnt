@@ -17,6 +17,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -172,33 +173,112 @@ public class EditTagPage extends javax.swing.JFrame {
 
     private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
         byte[] buffer = new byte[10];
-        int length = 0;
-//buffer = {0xAA, 0x01, 0x00, 0x00, 0x55};
-        buffer[length++] = (byte) 0xAA;
-        buffer[length++] = (byte) 0x01;
-        buffer[length++] = (byte) 0x00;
-        buffer[length++] = (byte) 0x00;
-        buffer[length++] = (byte) 0x55;
-        commPortParameter.selectedPort.writeBytes(buffer, length);
+        int index = 0,length;
+        int maxFuelLimit = 0;
+        byte[] regNo = new byte[10];
+        byte[] uid = new byte[7];
+        buffer[index++] = (byte) 0xAA;
+        buffer[index++] = (byte) 0x01;
+        buffer[index++] = (byte) 0x00;
+        buffer[index++] = (byte) 0x00;
+        buffer[index++] = (byte) 0x55;
+        commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
         if(commPortParameter.selectedPort.bytesAvailable() > 0)
         {
             int readLen = selectedPort.bytesAvailable();
-                //byte[] newData = new byte[readLen];
-                
-                //int len = selectedPort.readBytes(newData, readLen);
                 int len = selectedPort.readBytes(recvData, readLen);
-                //System.arraycopy(newData, 0, recvData, dataLen, readLen);
-                //dataLen += readLen;
-                
-                System.out.println();
                 System.out.println("data read blocking");
                 for(int i = 0; i < readLen; i++)
                 {
                     System.out.print(String.format(" %02X", recvData[i]));
                 }
                 //now we can decode the complete data;
+                //decode the data and show it to the Dialog box
+                
+                int i = 0;
+                if((recvData[i++]&0xFF) != 0xAA)
+                {
+                    System.out.println("header not found");
+                    return;
+                }
+                length = (recvData[i++] & 0xFF);
+                if((recvData[i++] & 0x7F) != 0x00)
+                {
+                    System.out.println("invalid response code");
+                    return;
+                }
+                if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
+                {
+                    System.out.println("nack");
+                    return;
+                }
+                i++;//skipping checksum
+                if((recvData[i++] & 0x7F) != 0x55)
+                {
+                    System.out.println("no footer");
+                    return;
+                }
+                
+                System.out.println("first response ok");
+                
+                if((recvData[i++]&0xFF) != 0xAA)
+                {
+                    System.out.println("second header not found");
+                    return;
+                }
+                length = (recvData[i++] & 0xFF);
+                if(((recvData[i++] & 0x7F) != 0x00))
+                {
+                    System.out.println("second invalid response code");
+                    return;
+                }
+                
+                if(((recvData[i] & 0x7F) == 0x14))
+                {
+                    System.out.println("no tag found");
+                    JOptionPane.showMessageDialog(this, "No Tag Found", "Tag Read",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                System.out.println("tag found " + String.format("%02X", recvData[i]));
+                //System.arraycopy(recvData, i, regNo, 0, 10);
+                index = 0;
+                for(int j = 0; j < 10; j++)
+                {
+                    //if((recvData[i]) != '@')
+                    if(Character.isAlphabetic(recvData[i]) || Character.isDigit(recvData[i]))
+                    {
+                        regNo[index++] = recvData[i];
+                    }
+                    i++;
+                }
+                System.out.println("reg no : ");
+                for(int j = 0; j < index; j++)
+                {
+                    System.out.print(String.format("%c", regNo[j]));
+                }
+                maxFuelLimit = (recvData[i++] & 0xFF);
+                maxFuelLimit |= ((recvData[i++] & 0xFF) << 8);
+                System.out.println("fuel limit : " + maxFuelLimit);
+                
+                i += 4;
+                index = 0;
+                for(int j = 0; j < 7; j++)
+                {
+                    uid[index++] = recvData[i++];
+                }
+                System.out.println("uid : ");
+                for(int j = 0; j < index; j++)
+                {
+                    System.out.print(String.format("%02X ", uid[j]));
+                }
+                JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
+//                if((recvData[i++] & 0x7F) != 0x55)
+//                {
+//                    System.out.println("no footer");
+//                    return;
+//                }
         }
         else
         {
@@ -208,9 +288,162 @@ public class EditTagPage extends javax.swing.JFrame {
 
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
-        String regNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
-        String maxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
-        System.out.println("Selected Data : " + regNo + " " + maxFuelLimit);
+
+        
+        //read from tag
+        byte[] buffer = new byte[10];
+        int index = 0,length;
+        int maxFuelLimit = 0;
+        byte[] regNo = new byte[10];
+        byte[] uid = new byte[7];
+        buffer[index++] = (byte) 0xAA;
+        buffer[index++] = (byte) 0x01;
+        buffer[index++] = (byte) 0x00;
+        buffer[index++] = (byte) 0x00;
+        buffer[index++] = (byte) 0x55;
+        commPortParameter.selectedPort.writeBytes(buffer, index);
+        commPortParameter.dataLen = 0;
+        commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
+        if (commPortParameter.selectedPort.bytesAvailable() > 0) {
+            int readLen = selectedPort.bytesAvailable();
+            int len = selectedPort.readBytes(recvData, readLen);
+            System.out.println("data read blocking");
+            for (int i = 0; i < readLen; i++) {
+                System.out.print(String.format(" %02X", recvData[i]));
+            }
+            //now we can decode the complete data;
+            //decode the data and show it to the Dialog box
+                            int i = 0;
+                if((recvData[i++]&0xFF) != 0xAA)
+                {
+                    System.out.println("header not found");
+                    return;
+                }
+                length = (recvData[i++] & 0xFF);
+                if((recvData[i++] & 0x7F) != 0x00)
+                {
+                    System.out.println("invalid response code");
+                    return;
+                }
+                if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
+                {
+                    System.out.println("nack");
+                    return;
+                }
+                i++;//skipping checksum
+                if((recvData[i++] & 0x7F) != 0x55)
+                {
+                    System.out.println("no footer");
+                    return;
+                }
+                
+                System.out.println("first response ok");
+                
+                if((recvData[i++]&0xFF) != 0xAA)
+                {
+                    System.out.println("second header not found");
+                    return;
+                }
+                length = (recvData[i++] & 0xFF);
+                if(((recvData[i++] & 0x7F) != 0x00))
+                {
+                    System.out.println("second invalid response code");
+                    return;
+                }
+                
+                if(((recvData[i] & 0x7F) == 0x14))
+                {
+                    System.out.println("no tag found");
+                    JOptionPane.showMessageDialog(this, "No Tag Found", "Tag Read",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                System.out.println("tag found " + String.format("%02X", recvData[i]));
+                //System.arraycopy(recvData, i, regNo, 0, 10);
+                index = 0;
+                for(int j = 0; j < 10; j++)
+                {
+                    //if((recvData[i]) != '@')
+                    if(Character.isAlphabetic(recvData[i]) || Character.isDigit(recvData[i]))
+                    {
+                        regNo[index++] = recvData[i];
+                    }
+                    i++;
+                }
+                System.out.println("reg no : ");
+                for(int j = 0; j < index; j++)
+                {
+                    System.out.print(String.format("%c", regNo[j]));
+                }
+                maxFuelLimit = (recvData[i++] & 0xFF);
+                maxFuelLimit |= ((recvData[i++] & 0xFF) << 8);
+                System.out.println("fuel limit : " + maxFuelLimit);
+                
+                i += 4;
+                index = 0;
+                for(int j = 0; j < 7; j++)
+                {
+                    uid[index++] = recvData[i++];
+                }
+                System.out.println("uid : ");
+                for(int j = 0; j < index; j++)
+                {
+                    System.out.print(String.format("%02X ", uid[j]));
+                }
+        } else {
+            System.out.print("No data avl");
+        }
+        //read registration number from the table
+        
+        //String regNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        //String maxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
+        //System.out.println("Selected Data : " + regNo + " " + maxFuelLimit);
+        
+        //combine registration number from the table and the UID from the tag
+        
+        //send verify request
+        try
+        {
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .timeout(Duration.ofSeconds(10))
+                    .uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
+                    .build();
+            HttpClient client = HttpClient.newHttpClient();
+            System.out.println("logout request prepared");
+            HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+            String verifyVehicleResp = response.body();
+            //buff = loginResp.toCharArray();
+
+            System.out.print(getRequest);
+            System.out.print(verifyVehicleResp);
+            /*
+            if(response is note update and allow)
+                return error;
+            
+            */
+        }catch(Exception e)
+        {
+
+        }
+        //prepare buffer for write command
+        
+        //send command to write tag
+        commPortParameter.selectedPort.writeBytes(buffer, index);
+        commPortParameter.dataLen = 0;
+        commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
+        if (commPortParameter.selectedPort.bytesAvailable() > 0) {
+            int readLen = selectedPort.bytesAvailable();
+            int len = selectedPort.readBytes(recvData, readLen);
+            System.out.println("data read blocking");
+            for (int i = 0; i < readLen; i++) {
+                System.out.print(String.format(" %02X", recvData[i]));
+            }
+            //now we can decode the complete data;
+            //decode the data and show it to the Dialog box
+        } else {
+            System.out.print("No data avl");
+        }
+        //check the succesful of tag write
     }//GEN-LAST:event_writeTagBtnActionPerformed
 
     /**

@@ -102,7 +102,7 @@ public class HomePage extends javax.swing.JFrame {
                 {
                     HttpRequest getRequest = HttpRequest.newBuilder()
                             .GET()
-                            .timeout(Duration.ofSeconds(10))
+                            .timeout(Duration.ofSeconds(2))
                             .uri(URI.create((lp.URL + lp.logoutRequest + lp.getAccessToken())))
                             .build();
                     HttpClient client = HttpClient.newHttpClient();

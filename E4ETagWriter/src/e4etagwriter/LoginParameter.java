@@ -16,6 +16,7 @@ public class LoginParameter {
     final String loginRequest = "e_fuel_login_req?data=";
     final String getVehicleListRequest = "get_vehicle_list?data=";
     final String logoutRequest = "e_fuel_logout_req?data=";
+    final String verifyVehicleRequest = "verify_vehicle_list?data=";
     public String getUsername()
     {
         return username;
