@@ -5,6 +5,8 @@
 package e4etagwriter;
 
 import static e4etagwriter.HomePage.hp;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
@@ -99,45 +101,49 @@ public class Login extends javax.swing.JFrame {
 	HttpResponse<String> response;
         lp.setUsername(usernameTF.getText());
         String loginResp;
-//        try {
-//            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
-//            getRequest = HttpRequest.newBuilder()
-//                .GET()
-//                .timeout(Duration.ofSeconds(10))
-//                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
-//                .build();
-//            client = HttpClient.newHttpClient();
-//            response = client.send(getRequest, BodyHandlers.ofString());
-//            loginResp = response.body();
-//            //buff = loginResp.toCharArray();
-//            
-//            System.out.print(getRequest);
-//            System.out.print(loginResp);
-//            
-//            if(loginResp.charAt(1) == '1')
-//            {
-//                    //connStatus = true;
-//                    lp.setAccessToken(loginResp.substring(3,9));
-//                    System.out.println(lp.getAccessToken());
-                    this.setVisible(false);
-                    hp.setVisible(true);
-//                    //lbConnStatus.setText("Connected");
-//                    //btnLogout.setEnabled(true);
-//                    //btnLogin.setEnabled(false);
-//            }
-//            else
-//            {
-//                JOptionPane.showMessageDialog(this, "Invalid Credentials", 
-//                                   "ERROR", JOptionPane.ERROR_MESSAGE);
-//                    //connStatus = false;
-//                    //lbConnStatus.setText("Invalid");
-//                    //btnLogout.setEnabled(false);
-//            }
-//
-//        } catch (Exception e1) {
-//                // TODO Auto-generated catch block
-//            e1.printStackTrace();
-//        }
+        try {
+            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
+            getRequest = HttpRequest.newBuilder()
+                .GET()
+                .timeout(Duration.ofSeconds(10))
+                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
+                .build();
+            client = HttpClient.newHttpClient();
+            response = client.send(getRequest, BodyHandlers.ofString());
+            loginResp = response.body();
+            //buff = loginResp.toCharArray();
+            
+            System.out.print(getRequest);
+            System.out.print(loginResp);
+            
+            if(loginResp.charAt(1) == '1')
+            {
+                    //connStatus = true;
+                lp.setAccessToken(loginResp.substring(3,9));
+                System.out.println(lp.getAccessToken());
+                this.setVisible(false);
+                hp.setVisible(true);
+                //lbConnStatus.setText("Connected");
+                //btnLogout.setEnabled(true);
+                //btnLogin.setEnabled(false);
+                FileWriter fileWriter = new FileWriter("test.txt");
+                PrintWriter printWriter = new PrintWriter(fileWriter); 
+                printWriter.print("Login Succesful");
+                printWriter.close();
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Invalid Credentials", 
+                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+                    //connStatus = false;
+                    //lbConnStatus.setText("Invalid");
+                    //btnLogout.setEnabled(false);
+            }
+
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
         
     }//GEN-LAST:event_loginBtnActionPerformed
 
