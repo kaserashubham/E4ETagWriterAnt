@@ -29,6 +29,7 @@ public class EditTagPage extends javax.swing.JFrame {
     /**
      * Creates new form EditTagPage
      */
+    byte[] uid = new byte[7];
     public EditTagPage() {
         initComponents();
     }
@@ -176,7 +177,7 @@ public class EditTagPage extends javax.swing.JFrame {
         int index = 0,length;
         int maxFuelLimit = 0;
         byte[] regNo = new byte[10];
-        byte[] uid = new byte[7];
+        
         buffer[index++] = (byte) 0xAA;
         buffer[index++] = (byte) 0x01;
         buffer[index++] = (byte) 0x00;
@@ -315,7 +316,7 @@ public class EditTagPage extends javax.swing.JFrame {
 
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
-
+        String verifyRequest = null;
         
         //read from tag
         readTag();
@@ -327,6 +328,8 @@ public class EditTagPage extends javax.swing.JFrame {
         System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
         
         //combine registration number from the table and the UID from the tag
+        verifyRequest.concat(lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() + tblRegNo);
+        System.out.print(verifyRequest);
         
         //send verify request
 //        try
