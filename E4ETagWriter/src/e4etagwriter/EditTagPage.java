@@ -30,6 +30,7 @@ public class EditTagPage extends javax.swing.JFrame {
      * Creates new form EditTagPage
      */
     byte[] uid = new byte[7];
+    String verifyRequest = "";
     public EditTagPage() {
         initComponents();
     }
@@ -316,7 +317,7 @@ public class EditTagPage extends javax.swing.JFrame {
 
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
-        String verifyRequest = null;
+        
         
         //read from tag
         readTag();
@@ -328,34 +329,72 @@ public class EditTagPage extends javax.swing.JFrame {
         System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
         
         //combine registration number from the table and the UID from the tag
-        verifyRequest.concat(lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() + tblRegNo);
-        System.out.print(verifyRequest);
+        tblRegNo = String.format("%10s", tblRegNo).replace(' ', '@');
+        verifyRequest = verifyRequest.concat(lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() + tblRegNo);
         
+        for(int j = 0; j < uid.length; j++)
+        {
+            verifyRequest = verifyRequest.concat(String.format("%02X", uid[j]));
+        }
+        System.out.print("Verify Request :" + verifyRequest);
         //send verify request
-//        try
-//        {
-//            HttpRequest getRequest = HttpRequest.newBuilder()
-//                    .GET()
-//                    .timeout(Duration.ofSeconds(10))
-//                    .uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
-//                    .build();
-//            HttpClient client = HttpClient.newHttpClient();
-//            System.out.println("logout request prepared");
-//            HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
-//            String verifyVehicleResp = response.body();
-//            //buff = loginResp.toCharArray();
-//
-//            System.out.print(getRequest);
-//            System.out.print(verifyVehicleResp);
-//            /*
-//            if(response is note update and allow)
-//                return error;
-//            
-//            */
-//        }catch(Exception e)
-//        {
-//
-//        }
+        try
+        {
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .timeout(Duration.ofSeconds(10))
+                    //.uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
+                    .uri(URI.create(verifyRequest))
+                    .build();
+            HttpClient client = HttpClient.newHttpClient();
+            System.out.println("logout request prepared");
+            HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+            String verifyVehicleResp = response.body();
+            //buff = loginResp.toCharArray();
+
+            System.out.print(getRequest);
+            System.out.print(verifyVehicleResp);
+            if(verifyVehicleResp.charAt(1) == '1')
+            {
+                System.out.println("session active");
+                switch(verifyVehicleResp.charAt(3))
+                {
+                    case '0':
+                        System.out.println("Allowed");
+                        break;
+                        case '1':
+                        System.out.println("Update");
+                        break;
+                        case '2':
+                        System.out.println("Disabled");
+                        break;
+                        case '3':
+                        System.out.println("Assigned");
+                        break;
+                        case '4':
+                        System.out.println("Not Available");
+                        break;
+                        case '5':
+                        System.out.println("Limit Exceeded");
+                        break;
+                        default:
+                            System.out.println("Unknown Response");
+                            break;
+                }
+            }
+            else if(verifyVehicleResp.charAt(1) == '0')
+            {
+                System.out.println("session expired");
+            }
+            /*
+            if(response is note update and allow)
+                return error;
+            
+            */
+        }catch(Exception e)
+        {
+
+        }
         //prepare buffer for write command
         
         //send command to write tag
