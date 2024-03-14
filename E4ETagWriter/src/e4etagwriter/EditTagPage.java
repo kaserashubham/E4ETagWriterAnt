@@ -314,10 +314,76 @@ public class EditTagPage extends javax.swing.JFrame {
     private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
         readTag();
     }//GEN-LAST:event_readBtnActionPerformed
+    char sendVerifyVehicleRequest()
+    {
+        
+        char retval = 0;
+        try
+        {
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .timeout(Duration.ofSeconds(10))
+                    //.uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
+                    .uri(URI.create(verifyRequest))
+                    .build();
+            HttpClient client = HttpClient.newHttpClient();
+            System.out.println("logout request prepared");
+            HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+            String verifyVehicleResp = response.body();
+            //buff = loginResp.toCharArray();
 
+            System.out.print(getRequest);
+            System.out.print(verifyVehicleResp);
+            if(verifyVehicleResp.charAt(1) == '1')
+            {
+                System.out.println("session active");
+                retval = (char) (verifyVehicleResp.charAt(3) - '0');
+                switch(verifyVehicleResp.charAt(3))
+                {
+                    case '0':
+                        System.out.println("Allowed");
+                        
+                        break;
+                        case '1':
+                        System.out.println("Update");
+                        break;
+                        case '2':
+                        System.out.println("Disabled");
+                        break;
+                        case '3':
+                        System.out.println("Assigned");
+                        break;
+                        case '4':
+                        System.out.println("Not Available");
+                        break;
+                        case '5':
+                        System.out.println("Limit Exceeded");
+                        break;
+                        default:
+                            System.out.println("Unknown Response");
+                            retval = 100;
+                            break;
+                }
+            }
+            else if(verifyVehicleResp.charAt(1) == '0')
+            {
+                System.out.println("session expired");
+                retval = 101;
+            }
+            /*
+            if(response is note update and allow)
+                return error;
+            
+            */
+        }catch(Exception e)
+        {
+            
+        }
+        return retval;
+    }
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
-        
+        verifyRequest = "";
         
         //read from tag
         readTag();
@@ -338,63 +404,35 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         System.out.print("Verify Request :" + verifyRequest);
         //send verify request
-        try
+        switch(sendVerifyVehicleRequest())
         {
-            HttpRequest getRequest = HttpRequest.newBuilder()
-                    .GET()
-                    .timeout(Duration.ofSeconds(10))
-                    //.uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
-                    .uri(URI.create(verifyRequest))
-                    .build();
-            HttpClient client = HttpClient.newHttpClient();
-            System.out.println("logout request prepared");
-            HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
-            String verifyVehicleResp = response.body();
-            //buff = loginResp.toCharArray();
-
-            System.out.print(getRequest);
-            System.out.print(verifyVehicleResp);
-            if(verifyVehicleResp.charAt(1) == '1')
-            {
-                System.out.println("session active");
-                switch(verifyVehicleResp.charAt(3))
-                {
-                    case '0':
-                        System.out.println("Allowed");
-                        break;
-                        case '1':
-                        System.out.println("Update");
-                        break;
-                        case '2':
-                        System.out.println("Disabled");
-                        break;
-                        case '3':
-                        System.out.println("Assigned");
-                        break;
-                        case '4':
-                        System.out.println("Not Available");
-                        break;
-                        case '5':
-                        System.out.println("Limit Exceeded");
-                        break;
-                        default:
-                            System.out.println("Unknown Response");
-                            break;
-                }
-            }
-            else if(verifyVehicleResp.charAt(1) == '0')
-            {
-                System.out.println("session expired");
-            }
-            /*
-            if(response is note update and allow)
-                return error;
-            
-            */
-        }catch(Exception e)
-        {
-
+            case 0:
+                System.out.println("Write new tag");
+            break;
+            case 1:
+                System.out.println("Update old tag");
+            break;
+            case 2:
+                System.out.println("The tag is disabled");
+            break;
+            case 3:
+                System.out.println("The tag is already assigned");
+            break;
+            case 4:
+                System.out.println("Not in the list");
+            break;
+            case 5:
+                System.out.println("The list is overflowed");
+            break;
+            case 100:
+                System.out.println("Other reason");
+            break;
+            case 101:
+                System.out.println("Session is expired");
+            break;
+                
         }
+        
         //prepare buffer for write command
         
         //send command to write tag
