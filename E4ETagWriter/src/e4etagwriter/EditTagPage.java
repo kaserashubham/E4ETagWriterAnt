@@ -30,7 +30,11 @@ public class EditTagPage extends javax.swing.JFrame {
      * Creates new form EditTagPage
      */
     byte[] uid = new byte[7];
+    String tblRegNo;
+    String tblMaxFuelLimit;
     String verifyRequest = "";
+    byte[] buffer = new byte[25];
+    int index = 0;
     public EditTagPage() {
         initComponents();
     }
@@ -172,10 +176,13 @@ public class EditTagPage extends javax.swing.JFrame {
             e1.printStackTrace();
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
-    private void readTag()
+    private char readTag()
     {
-        byte[] buffer = new byte[10];
-        int index = 0,length;
+        //byte[] buffer = new byte[10];
+        //char retval = 0;
+        //int index = 0,length;
+        index = 0;
+        int length;
         int maxFuelLimit = 0;
         byte[] regNo = new byte[10];
         
@@ -203,24 +210,24 @@ public class EditTagPage extends javax.swing.JFrame {
                 if((recvData[i++]&0xFF) != 0xAA)
                 {
                     System.out.println("header not found");
-                    return;
+                    return 0;
                 }
                 length = (recvData[i++] & 0xFF);
                 if((recvData[i++] & 0x7F) != 0x00)
                 {
                     System.out.println("invalid response code");
-                    return;
+                    return 0;
                 }
                 if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
                 {
                     System.out.println("nack");
-                    return;
+                    return 0;
                 }
                 i++;//skipping checksum
                 if((recvData[i++] & 0x7F) != 0x55)
                 {
                     System.out.println("no footer");
-                    return;
+                    return 0;
                 }
                 
                 System.out.println("first response ok");
@@ -228,20 +235,20 @@ public class EditTagPage extends javax.swing.JFrame {
                 if((recvData[i++]&0xFF) != 0xAA)
                 {
                     System.out.println("second header not found");
-                    return;
+                    return 0;
                 }
                 length = (recvData[i++] & 0xFF);
                 if(((recvData[i++] & 0x7F) != 0x00))
                 {
                     System.out.println("second invalid response code");
-                    return;
+                    return 0;
                 }
                 
                 if(((recvData[i] & 0x7F) == 0x14))
                 {
                     System.out.println("no tag found");
-                    JOptionPane.showMessageDialog(this, "No Tag Found", "Tag Read",JOptionPane.ERROR_MESSAGE);
-                    return;
+                    
+                    return 1;
                 }
                 System.out.println("tag found " + String.format("%02X", recvData[i]));
                 //System.arraycopy(recvData, i, regNo, 0, 10);
@@ -276,25 +283,27 @@ public class EditTagPage extends javax.swing.JFrame {
                 {
                     System.out.print(String.format("%02X ", uid[j]));
                 }
-                JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
+                
 //                if((recvData[i++] & 0x7F) != 0x55)
 //                {
 //                    System.out.println("no footer");
 //                    return;
 //                }
+                    return 3;
         }
         else
         {
             System.out.print("No data avl");
-            JOptionPane.showMessageDialog(this, "No Data Available", 
-                                          "INFORMATION", 
-                                          JOptionPane.INFORMATION_MESSAGE);
+            
+            return 2;
         }
+        
+        //return retval;
     }
     private void writeTag()
     {
-        byte[] buffer = new byte[10];
-        int index = 0;
+        
+        
         commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
@@ -312,7 +321,26 @@ public class EditTagPage extends javax.swing.JFrame {
         }
     }
     private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
-        readTag();
+        switch(readTag())
+        {
+            case 0:
+                //Invalid response - garbage response
+            break;
+            case 1:
+                //no tag found
+                JOptionPane.showMessageDialog(this, "No Tag Found", "Tag Read",JOptionPane.ERROR_MESSAGE);
+            break;
+            case 2:
+                //no data availabe
+                JOptionPane.showMessageDialog(this, "No Data Available", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
+            break;
+            case 3: 
+                //tag read succesful
+                JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
+            break;
+        }
     }//GEN-LAST:event_readBtnActionPerformed
     char sendVerifyVehicleRequest()
     {
@@ -381,17 +409,66 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         return retval;
     }
+    
+    private void prepareWriteTagCmd()
+    {
+        int fuelLimit = 0;
+        index = 0;
+        buffer[index++] = (byte) 0xAA;
+        buffer[index++] = (byte) 0x11;
+        buffer[index++] = (byte) 0x01;
+        for(int i = 0; i < 10; i++)
+        {
+            buffer[index++] = (byte) tblRegNo.charAt(i);
+        }
+        fuelLimit = Integer.parseInt(tblMaxFuelLimit);
+        buffer[index++] = (byte) (fuelLimit & 0xFF);
+        buffer[index++] = (byte) ((fuelLimit >> 8) & 0xFF);
+        buffer[index++] = (byte) 0xFF;
+        buffer[index++] = (byte) 0xFF;
+        buffer[index++] = (byte) 0xFF;
+        buffer[index++] = (byte) 0x01;
+        buffer[index++] = 0x00; //add checksum function
+        buffer[index++] = (byte) 0x55;
+        for(int i = 0; i < index; i++)
+        {
+            System.out.print(String.format(" %02X", buffer[i]));
+        }
+    }
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
         verifyRequest = "";
         
         //read from tag
-        readTag();
+        switch(readTag())
+        {
+            case 0:
+                //Invalid response - garbage response
+            break;
+            case 1:
+                //no tag found
+                JOptionPane.showMessageDialog(this, "No Tag Found", "Tag Read",JOptionPane.ERROR_MESSAGE);
+                return ;
+            //break;
+            case 2:
+                //no data availabe
+                JOptionPane.showMessageDialog(this, "No Data Available", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
+                return;
+            //break;
+            case 3: 
+                //tag read succesful
+                System.out.println("tag reading successful.");
+                //JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
+            break;
+        }
         //read registration number from the table
         
-        
-        String tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
-        String tblMaxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
+        tblRegNo = "";
+        tblMaxFuelLimit = "";
+        tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        tblMaxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
         System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
         
         //combine registration number from the table and the UID from the tag
@@ -414,26 +491,33 @@ public class EditTagPage extends javax.swing.JFrame {
             break;
             case 2:
                 System.out.println("The tag is disabled");
-            break;
+                return;
+            //break;
             case 3:
                 System.out.println("The tag is already assigned");
-            break;
+            return;
+            //break;
             case 4:
                 System.out.println("Not in the list");
-            break;
+            return;
+            //break;
             case 5:
                 System.out.println("The list is overflowed");
-            break;
+            return;
+            //break;
             case 100:
                 System.out.println("Other reason");
-            break;
+            return;
+            //break;
             case 101:
                 System.out.println("Session is expired");
-            break;
+            return;
+            //break;
                 
         }
         
         //prepare buffer for write command
+        prepareWriteTagCmd();
         
         //send command to write tag
         //writeTag();
