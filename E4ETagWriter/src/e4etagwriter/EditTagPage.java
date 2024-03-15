@@ -33,6 +33,7 @@ public class EditTagPage extends javax.swing.JFrame {
     String tblRegNo;
     String tblMaxFuelLimit;
     String verifyRequest = "";
+    String updateRequest = "";
     byte[] buffer = new byte[25];
     int index = 0;
     public EditTagPage() {
@@ -409,7 +410,47 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         return retval;
     }
-    
+    char sendUpdateVehicleRequest()
+    {
+        
+        char retval = 0;
+        try
+        {
+            HttpRequest getRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .timeout(Duration.ofSeconds(10))
+                    //.uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
+                    .uri(URI.create(updateRequest))
+                    .build();
+            HttpClient client = HttpClient.newHttpClient();
+            System.out.println("logout request prepared");
+            HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+            String updateVehicleResp = response.body();
+            //buff = loginResp.toCharArray();
+
+            System.out.print(getRequest);
+            System.out.print(updateVehicleResp);
+            if(updateVehicleResp.charAt(1) == '1')
+            {
+                retval = 1;
+                System.out.println("Vehicle Update Succesful");
+            }
+            else if(updateVehicleResp.charAt(1) == '0')
+            {
+                System.out.println("session expired");
+                retval = 0;
+            }
+            /*
+            if(response is note update and allow)
+                return error;
+            
+            */
+        }catch(Exception e)
+        {
+            
+        }
+        return retval;
+    }
     private void prepareWriteTagCmd()
     {
         int fuelLimit = 0;
@@ -428,7 +469,7 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[index++] = (byte) 0xFF;
         buffer[index++] = (byte) 0xFF;
         buffer[index++] = (byte) 0x01;
-        buffer[index++] = 0x00; //add checksum function
+        buffer[index++] = getChecksum(buffer,buffer[1],2); //add checksum function
         buffer[index++] = (byte) 0x55;
         for(int i = 0; i < index; i++)
         {
@@ -438,7 +479,7 @@ public class EditTagPage extends javax.swing.JFrame {
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
         verifyRequest = "";
-        
+        updateRequest = "";
         //read from tag
         switch(readTag())
         {
@@ -515,15 +556,45 @@ public class EditTagPage extends javax.swing.JFrame {
             //break;
                 
         }
+        //send updateVehicleList request
+        updateRequest = updateRequest.concat(lp.URL + lp.updateVehicleRequest + lp.getAccessToken() + tblRegNo);
         
+        for(int j = 0; j < uid.length; j++)
+        {
+            updateRequest = updateRequest.concat(String.format("%02X", uid[j]));
+        }
+        System.out.print("Update Request :" + updateRequest);
+        switch(sendUpdateVehicleRequest())
+        {
+            case 0:
+                System.out.println("Session end");
+                return;
+                //break;
+            case 1:
+                break;
+        }
         //prepare buffer for write command
         prepareWriteTagCmd();
         
         //send command to write tag
-        //writeTag();
+        
+        writeTag();
         //check the succesful of tag write
     }//GEN-LAST:event_writeTagBtnActionPerformed
+    private byte getChecksum(byte[] buff, byte len, int startIndex)
+    {
+            byte chksum=0;
+            int i=0;
 
+            for(i=0 ; i<len ; i++)
+            {
+                    chksum+=buff[i + startIndex];
+            }
+
+            chksum = (byte) ((~chksum) + 1);
+
+            return chksum;
+    }
     /**
      * @param args the command line arguments
      */
