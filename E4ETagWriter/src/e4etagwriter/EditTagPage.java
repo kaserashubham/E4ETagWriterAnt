@@ -565,6 +565,23 @@ public class EditTagPage extends javax.swing.JFrame {
         vehicleListTable.setRowSorter(tr);
         tr.setRowFilter(RowFilter.regexFilter(query));
     }
+    private char getSelectedVehicle()
+    {
+        //char retval = 0;
+        tblRegNo = "";
+        tblMaxFuelLimit = "";
+        System.out.println("Selected row : " + vehicleListTable.getSelectedRow());
+        if(vehicleListTable.getSelectedRow() == -1)
+        {
+            return (char) 0;
+        }
+        //tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        tblRegNo = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        tblMaxFuelLimit = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
+        System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
+        //retval = (char) vehicleListTable.getSelectedRow();
+        return 1;
+    }
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
         verifyRequest = "";
@@ -594,14 +611,16 @@ public class EditTagPage extends javax.swing.JFrame {
             break;
         }
         //read registration number from the table
+        if(getSelectedVehicle() == 0)
+        {
+            System.out.println("No Vehicle Selected");
+            JOptionPane.showMessageDialog(this, "No Vehicle Selected", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+            
         
-        tblRegNo = "";
-        tblMaxFuelLimit = "";
-        System.out.println("Selected row : " + vehicleListTable.getSelectedRow());
-        //tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
-        tblRegNo = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
-        tblMaxFuelLimit = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
-        System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
         
         //combine registration number from the table and the UID from the tag
         tblRegNo = String.format("%10s", tblRegNo).replace(' ', '@');
