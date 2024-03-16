@@ -301,9 +301,75 @@ public class EditTagPage extends javax.swing.JFrame {
         
         //return retval;
     }
-    private void writeTag()
+    /*
+    0 - Communication Error
+    1 - No Tag Found
+    2 - Tag Write Succesful
+    3 - No Resp Data
+    */
+    private char parseWriteTagResp(byte[] recvData, int readLen) {
+        //return 0;
+        int i = 0, length;
+        if((recvData[i++]&0xFF) != 0xAA)
+        {
+            System.out.println("header not found");
+            return 0;
+        }
+        length = (recvData[i++] & 0xFF);
+        if((recvData[i++] & 0x7F) != 0x01)
+        {
+            System.out.println("invalid response code");
+            return 0;
+        }
+        if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
+        {
+            System.out.println("nack");
+            return 0;
+        }
+        i++;//skipping checksum
+        if((recvData[i++] & 0x7F) != 0x55)
+        {
+            System.out.println("no footer");
+            return 0;
+        }
+
+        System.out.println("first response ok");
+
+        if((recvData[i++]&0xFF) != 0xAA)
+        {
+            System.out.println("second header not found");
+            return 0;
+        }
+        length = (recvData[i++] & 0xFF);
+        if(((recvData[i++] & 0x7F) != 0x01))
+        {
+            System.out.println("second invalid response code");
+            return 0;
+        }
+
+        if(((recvData[i] & 0x7F) == 0x14))
+        {
+            System.out.println("no tag found");
+
+            return 1;
+        }
+        else if(((recvData[i] & 0x7F) == 0x13))
+        {
+            System.out.println("Tag write successful");
+
+            return 2;
+        }
+        return 0;
+    }
+    /*
+    0 - Communication Error
+    1 - No Tag Found
+    2 - Tag Write Succesful
+    3 - No Resp Data
+    */
+    private char writeTag()
     {
-        
+        //char retval = 0;
         
         commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
@@ -316,9 +382,11 @@ public class EditTagPage extends javax.swing.JFrame {
                 System.out.print(String.format(" %02X", recvData[i]));
             }
             //now we can decode the complete data;
+            return parseWriteTagResp(recvData,readLen);
             //decode the data and show it to the Dialog box
         } else {
             System.out.print("No data avl");
+            return 3;
         }
     }
     private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
@@ -522,13 +590,16 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         System.out.print("Verify Request :" + verifyRequest);
         //send verify request
+        boolean tagUpdated = false;
         switch(sendVerifyVehicleRequest())
         {
             case 0:
                 System.out.println("Write new tag");
+                
             break;
             case 1:
                 System.out.println("Update old tag");
+                tagUpdated = true;
             break;
             case 2:
                 System.out.println("The tag is disabled");
@@ -536,22 +607,37 @@ public class EditTagPage extends javax.swing.JFrame {
             //break;
             case 3:
                 System.out.println("The tag is already assigned");
+                JOptionPane.showMessageDialog(this, "Tag Already Assigned", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 4:
                 System.out.println("Not in the list");
+                JOptionPane.showMessageDialog(this, "Vehicle Not In The List", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 5:
                 System.out.println("The list is overflowed");
+                JOptionPane.showMessageDialog(this, "Vehicle List Overflowed", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 100:
                 System.out.println("Other reason");
+                JOptionPane.showMessageDialog(this, "Tag Allocation Failed", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 101:
                 System.out.println("Session is expired");
+                JOptionPane.showMessageDialog(this, "Session Expired, Please Login Again", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
                 
@@ -568,6 +654,9 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             case 0:
                 System.out.println("Session end");
+                JOptionPane.showMessageDialog(this, "Session Expired, Please Login Again", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
                 return;
                 //break;
             case 1:
@@ -578,7 +667,40 @@ public class EditTagPage extends javax.swing.JFrame {
         
         //send command to write tag
         
-        writeTag();
+        switch(writeTag())
+        {
+            case 0:
+            JOptionPane.showMessageDialog(this, "Communication Error, Please write tag again", 
+                                      "INFORMATION", 
+                                      JOptionPane.INFORMATION_MESSAGE);
+            break;
+            case 1:
+            JOptionPane.showMessageDialog(this, "No Tag Found", 
+                                      "INFORMATION", 
+                                      JOptionPane.INFORMATION_MESSAGE);
+            break;
+            case 2:
+                if(tagUpdated)
+                {
+                    JOptionPane.showMessageDialog(this, "Tag Updated Successfully", 
+                                      "INFORMATION", 
+                                      JOptionPane.INFORMATION_MESSAGE);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "Tag Write Successfully", 
+                                      "INFORMATION", 
+                                      JOptionPane.INFORMATION_MESSAGE);
+                }
+            
+            break;
+            case 3:
+            JOptionPane.showMessageDialog(this, "No Response Data", 
+                                      "INFORMATION", 
+                                      JOptionPane.INFORMATION_MESSAGE);
+            break;
+                
+        }
         //check the succesful of tag write
     }//GEN-LAST:event_writeTagBtnActionPerformed
     private byte getChecksum(byte[] buff, byte len, int startIndex)
@@ -638,4 +760,6 @@ public class EditTagPage extends javax.swing.JFrame {
     private javax.swing.JTable vehicleListTable;
     private javax.swing.JButton writeTagBtn;
     // End of variables declaration//GEN-END:variables
+
+    
 }
