@@ -18,7 +18,9 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -36,6 +38,7 @@ public class EditTagPage extends javax.swing.JFrame {
     String updateRequest = "";
     byte[] buffer = new byte[25];
     int index = 0;
+    DefaultTableModel tblModel;
     public EditTagPage() {
         initComponents();
     }
@@ -54,6 +57,7 @@ public class EditTagPage extends javax.swing.JFrame {
         refreshBtn = new javax.swing.JButton();
         writeTagBtn = new javax.swing.JButton();
         readBtn = new javax.swing.JButton();
+        filterTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -88,26 +92,36 @@ public class EditTagPage extends javax.swing.JFrame {
             }
         });
 
+        filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filterTextFieldKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(refreshBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(readBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(writeTagBtn))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(refreshBtn)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(readBtn)
+                            .addGap(18, 18, 18)
+                            .addComponent(writeTagBtn))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addContainerGap()
+                .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -154,7 +168,7 @@ public class EditTagPage extends javax.swing.JFrame {
             
             System.out.println("\nNumber of Vehicle : " + noOfVehicle);
             
-            DefaultTableModel tblModel = (DefaultTableModel)vehicleListTable.getModel();
+            tblModel = (DefaultTableModel)vehicleListTable.getModel();
             tblModel.setRowCount(0);
             char[] list = vehicleListResp.toCharArray();
             while(list[index++] != '"');
@@ -544,6 +558,13 @@ public class EditTagPage extends javax.swing.JFrame {
             System.out.print(String.format(" %02X", buffer[i]));
         }
     }
+    private void filter(String query)
+    {
+        tblModel = (DefaultTableModel)vehicleListTable.getModel();
+        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<DefaultTableModel>(tblModel);
+        vehicleListTable.setRowSorter(tr);
+        tr.setRowFilter(RowFilter.regexFilter(query));
+    }
     private void writeTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_writeTagBtnActionPerformed
         // TODO add your handling code here:
         verifyRequest = "";
@@ -576,8 +597,10 @@ public class EditTagPage extends javax.swing.JFrame {
         
         tblRegNo = "";
         tblMaxFuelLimit = "";
-        tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
-        tblMaxFuelLimit = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
+        System.out.println("Selected row : " + vehicleListTable.getSelectedRow());
+        //tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        tblRegNo = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
+        tblMaxFuelLimit = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
         System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
         
         //combine registration number from the table and the UID from the tag
@@ -703,6 +726,11 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         //check the succesful of tag write
     }//GEN-LAST:event_writeTagBtnActionPerformed
+
+    private void filterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyReleased
+        String query = filterTextField.getText().toUpperCase();
+        filter(query);
+    }//GEN-LAST:event_filterTextFieldKeyReleased
     private byte getChecksum(byte[] buff, byte len, int startIndex)
     {
             byte chksum=0;
@@ -754,6 +782,7 @@ public class EditTagPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField filterTextField;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton readBtn;
     private javax.swing.JButton refreshBtn;
