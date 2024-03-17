@@ -139,7 +139,7 @@ public class EditTagPage extends javax.swing.JFrame {
         String vehicleListResp;
         char[] regNo = new char[11];
         char[] maxFuelLimit = new char[5];
-        int index = 0;
+        int indx = 0;
         try
         {
             HttpRequest getRequest = HttpRequest.newBuilder()
@@ -170,21 +170,29 @@ public class EditTagPage extends javax.swing.JFrame {
             
             tblModel = (DefaultTableModel)vehicleListTable.getModel();
             tblModel.setRowCount(0);
-            char[] list = vehicleListResp.toCharArray();
-            while(list[index++] != '"');
+            //char[] list = vehicleListResp.toCharArray();
+            char[] list = new char[1200];
+            list = vehicleListResp.toCharArray();
+            while(list[indx++] != '"');
             
-            while(list[index] != '"')
+            try
             {
-                regNo = Arrays.copyOfRange(list, index, index + 10);
-                index += 10;
-                maxFuelLimit = Arrays.copyOfRange(list, index, index + 4);
-                index += 5;
-                System.out.println("index:" + index + " " + new String(regNo).replaceAll("@", "") + " " + new String(maxFuelLimit));
-                Object[] data = {new String(regNo).replaceAll("@", ""),Integer.valueOf(new String(maxFuelLimit))};
-                //System.out.println(a);
-                tblModel.addRow(data);
+                while(list[indx] != '"')
+                {
+                    regNo = Arrays.copyOfRange(list, indx, indx + 10);
+                    indx += 10;
+                    maxFuelLimit = Arrays.copyOfRange(list, indx, indx + 4);
+                    indx += 5;
+                    System.out.println("index:" + indx + " " + new String(regNo).replaceAll("@", "") + " " + new String(maxFuelLimit));
+                    Object[] data = {new String(regNo).replaceAll("@", ""),Integer.valueOf(new String(maxFuelLimit))};
+                    //System.out.println(a);
+                    tblModel.addRow(data);
+                }
             }
-            
+            catch(Exception e)
+            {
+                
+            }
         }
         catch(Exception e1) {
                 // TODO Auto-generated catch block
