@@ -38,6 +38,8 @@ public class EditTagPage extends javax.swing.JFrame {
     String updateRequest = "";
     byte[] buffer = new byte[25];
     int index = 0;
+    int maxFuelLimit;
+    byte[] tagRegNo = new byte[10];
     DefaultTableModel tblModel;
     public EditTagPage() {
         initComponents();
@@ -132,6 +134,7 @@ public class EditTagPage extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
@@ -140,6 +143,7 @@ public class EditTagPage extends javax.swing.JFrame {
         char[] regNo = new char[11];
         char[] maxFuelLimit = new char[5];
         int indx = 0;
+        
         try
         {
             HttpRequest getRequest = HttpRequest.newBuilder()
@@ -206,8 +210,11 @@ public class EditTagPage extends javax.swing.JFrame {
         //int index = 0,length;
         index = 0;
         int length;
-        int maxFuelLimit = 0;
-        byte[] regNo = new byte[10];
+        maxFuelLimit = 0;
+        for(int i = 0; i < tagRegNo.length; i++)
+        {
+            tagRegNo[i] = 0x00;
+        }
         
         buffer[index++] = (byte) 0xAA;
         buffer[index++] = (byte) 0x01;
@@ -281,14 +288,14 @@ public class EditTagPage extends javax.swing.JFrame {
                     //if((recvData[i]) != '@')
                     if(Character.isAlphabetic(recvData[i]) || Character.isDigit(recvData[i]))
                     {
-                        regNo[index++] = recvData[i];
+                        tagRegNo[index++] = recvData[i];
                     }
                     i++;
                 }
                 System.out.print("reg no : ");
                 for(int j = 0; j < index; j++)
                 {
-                    System.out.print(String.format("%02X ", regNo[j]));
+                    System.out.print(String.format("%02X ", tagRegNo[j]));
                 }
                 System.out.println();
                 maxFuelLimit = (recvData[i++] & 0xFF);
@@ -429,7 +436,14 @@ public class EditTagPage extends javax.swing.JFrame {
             break;
             case 3: 
                 //tag read succesful
-                JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
+                String regNoStr = new String(tagRegNo);
+                String uidStr = "";
+                
+                for(int i = 0; i < uid.length; i++)
+                {
+                    uidStr = uidStr.concat(String.format("%02X ", uid[i]));
+                }
+                JOptionPane.showMessageDialog(this, "Tag Read Succesful\nReg No : " + regNoStr + "\nMax Fuel Limit : " + maxFuelLimit + "\nUID : " + uidStr, "Tag Read",JOptionPane.INFORMATION_MESSAGE);
             break;
         }
     }//GEN-LAST:event_readBtnActionPerformed
