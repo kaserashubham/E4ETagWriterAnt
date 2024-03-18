@@ -6,6 +6,7 @@
 package e4etagwriter;
 
 import com.fazecast.jSerialComm.SerialPort;
+import static e4etagwriter.HomePage.hp;
 import static e4etagwriter.SerialComm.*;
 import javax.swing.JOptionPane;
 /**
@@ -42,9 +43,14 @@ public class ConfigPage extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         baudRateCB = new javax.swing.JComboBox<>();
         applyBtn = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        cancelBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setText("Comm Port");
 
@@ -60,7 +66,12 @@ public class ConfigPage extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Cancel");
+        cancelBtn.setText("Cancel");
+        cancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -79,7 +90,7 @@ public class ConfigPage extends javax.swing.JFrame {
                             .addComponent(baudRateCB, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)
+                        .addComponent(cancelBtn)
                         .addGap(18, 18, 18)
                         .addComponent(applyBtn)))
                 .addContainerGap())
@@ -98,7 +109,7 @@ public class ConfigPage extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(applyBtn)
-                    .addComponent(jButton2))
+                    .addComponent(cancelBtn))
                 .addContainerGap(135, Short.MAX_VALUE))
         );
 
@@ -118,6 +129,7 @@ public class ConfigPage extends javax.swing.JFrame {
         {
             //serialEventBasedReading(commPortParameter.selectedPort);
             dispose();
+            hp.setVisible(true);
         }
         else
         {
@@ -126,6 +138,14 @@ public class ConfigPage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_applyBtnActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        hp.setVisible(true);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBtnActionPerformed
+        dispose();
+        hp.setVisible(true);
+    }//GEN-LAST:event_cancelBtnActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -165,8 +185,8 @@ public class ConfigPage extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyBtn;
     private javax.swing.JComboBox<String> baudRateCB;
+    private javax.swing.JButton cancelBtn;
     private javax.swing.JComboBox<SerialPort> commPortCB;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables

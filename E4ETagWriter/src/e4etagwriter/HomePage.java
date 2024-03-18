@@ -89,11 +89,13 @@ public class HomePage extends javax.swing.JFrame {
     private void configureBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_configureBtnActionPerformed
         // TODO add your handling code here:
         configPage.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_configureBtnActionPerformed
 
     private void readWriteTagBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readWriteTagBtnActionPerformed
         // TODO add your handling code here:
         etp.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_readWriteTagBtnActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
