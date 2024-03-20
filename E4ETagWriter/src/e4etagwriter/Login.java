@@ -5,12 +5,23 @@
 package e4etagwriter;
 
 import static e4etagwriter.HomePage.hp;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JOptionPane;
 /**
  *
@@ -36,32 +47,18 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         usernameTF = new javax.swing.JTextField();
         passwordTF = new javax.swing.JPasswordField();
         loginBtn = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setLocationByPlatform(true);
         setResizable(false);
-
-        jPanel1.setBackground(new java.awt.Color(51, 153, 255));
-        jPanel1.setPreferredSize(new java.awt.Dimension(80, 0));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 80, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -71,7 +68,7 @@ public class Login extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Password");
 
-        loginBtn.setBackground(new java.awt.Color(51, 153, 255));
+        loginBtn.setBackground(new java.awt.Color(136, 180, 67));
         loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         loginBtn.setForeground(new java.awt.Color(255, 255, 255));
         loginBtn.setText("Login");
@@ -82,12 +79,26 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        jPanel3.setBackground(new java.awt.Color(136, 180, 67));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 80, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(44, 44, 44)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -98,7 +109,7 @@ public class Login extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(usernameTF)
                             .addComponent(passwordTF, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addGap(70, 70, 70))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,25 +125,20 @@ public class Login extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(138, Short.MAX_VALUE))
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -141,55 +147,127 @@ public class Login extends javax.swing.JFrame {
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
         // TODO add your handling code here:
-        HttpRequest getRequest;
-	HttpClient client;
-	HttpResponse<String> response;
-        lp.setUsername(usernameTF.getText());
-        String loginResp;
+//        HttpRequest getRequest;
+//	HttpClient client;
+//	HttpResponse<String> response;
+//        lp.setUsername(usernameTF.getText());
+//        String loginResp;
+//        try {
+//            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
+//            getRequest = HttpRequest.newBuilder()
+//                .GET()
+//                .timeout(Duration.ofSeconds(10))
+//                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
+//                .build();
+//            client = HttpClient.newHttpClient();
+//            response = client.send(getRequest, BodyHandlers.ofString());
+//            loginResp = response.body();
+//            //buff = loginResp.toCharArray();
+//            
+//            System.out.print(getRequest);
+//            System.out.print(loginResp);
+//            
+//            if(loginResp.charAt(1) == '1')
+//            {
+//                    //connStatus = true;
+//                lp.setAccessToken(loginResp.substring(3,9));
+//                System.out.println(lp.getAccessToken());
+//                this.setVisible(false);
+//                hp.setVisible(true);
+//                //lbConnStatus.setText("Connected");
+//                //btnLogout.setEnabled(true);
+//                //btnLogin.setEnabled(false);
+//                FileWriter fileWriter = new FileWriter("test.txt");
+//                PrintWriter printWriter = new PrintWriter(fileWriter); 
+//                printWriter.print("Login Succesful");
+//                printWriter.close();
+//            }
+//            else
+//            {
+//                JOptionPane.showMessageDialog(this, "Invalid Credentials", 
+//                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+//                    //connStatus = false;
+//                    //lbConnStatus.setText("Invalid");
+//                    //btnLogout.setEnabled(false);
+//            }
+//
+//        } catch (Exception e1) {
+//                // TODO Auto-generated catch block
+//            e1.printStackTrace();
+//        }
+            //String body = "{\"name\": \"Apple iPad Air\", \"data\": { \"Generation\": \"4th\", \"Price\": \"519.99\", \"Capacity\": \"256 GB\" }}";
+            String body = "{\"email\": \"support@e4engineer.in\",\"password\": \"hemesh\"}";
+            String responseBody = "";
+            String statusBody = "statusMessage='",statusStr;
+            char status[] = new char[20];
+            int statusIndex = 0;
+        //URL url;
         try {
-            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
-            getRequest = HttpRequest.newBuilder()
-                .GET()
-                .timeout(Duration.ofSeconds(10))
-                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
-                .build();
-            client = HttpClient.newHttpClient();
-            response = client.send(getRequest, BodyHandlers.ofString());
-            loginResp = response.body();
-            //buff = loginResp.toCharArray();
-            
-            System.out.print(getRequest);
-            System.out.print(loginResp);
-            
-            if(loginResp.charAt(1) == '1')
-            {
-                    //connStatus = true;
-                lp.setAccessToken(loginResp.substring(3,9));
-                System.out.println(lp.getAccessToken());
-                this.setVisible(false);
-                hp.setVisible(true);
-                //lbConnStatus.setText("Connected");
-                //btnLogout.setEnabled(true);
-                //btnLogin.setEnabled(false);
-                FileWriter fileWriter = new FileWriter("test.txt");
-                PrintWriter printWriter = new PrintWriter(fileWriter); 
-                printWriter.print("Login Succesful");
-                printWriter.close();
-            }
-            else
-            {
-                JOptionPane.showMessageDialog(this, "Invalid Credentials", 
-                                   "ERROR", JOptionPane.ERROR_MESSAGE);
-                    //connStatus = false;
-                    //lbConnStatus.setText("Invalid");
-                    //btnLogout.setEnabled(false);
-            }
-
-        } catch (Exception e1) {
-                // TODO Auto-generated catch block
-            e1.printStackTrace();
+           URL url = new URL("http://34.199.80.64/android_login");
+            //URL url = new URL("https://api.restful-api.dev/objects");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setRequestProperty("Content-Type", "application/json");
+        //conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+        System.out.println("Request body : " + body);
+        try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
+            dos.writeBytes(body);
+            System.out.println("Request : " + body);
         }
-        
+
+        try (BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            String line;
+            while ((line = bf.readLine()) != null) {
+                //System.out.println(line);
+                responseBody += line;
+            }
+        }
+        System.out.println("responseBody : " + responseBody);
+        statusIndex = responseBody.indexOf(statusBody);
+                
+        if(statusIndex == -1)
+        {
+            System.out.println("Wrong Response");
+            return;
+        }
+        statusIndex += statusBody.length();
+        System.out.println("statusIndex : " + statusIndex);
+        int i,j;
+        for(i = statusIndex,j = 0;;i++,j++)
+        {
+            if(responseBody.charAt(i) == '\'')
+            {
+                break;
+            }
+            status[j] = responseBody.charAt(i);
+        }
+        statusStr = Arrays.toString(status);
+        System.out.println("status : " + statusStr);
+        if(statusStr.equals("Success"))
+        {
+            System.out.println("credentials correct");
+        }
+        else if(statusStr.equalsIgnoreCase("Success"))
+        {
+            System.out.println("Wrong Password");
+        }
+        else if(statusStr.equalsIgnoreCase("Success"))
+        {
+            System.out.println("Invalid email id");
+        }
+        else
+        {
+            System.out.println("other condition");
+        }
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(Exception e)
+        {
+            
+        }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     /**
@@ -231,8 +309,8 @@ public class Login extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JButton loginBtn;
     private javax.swing.JPasswordField passwordTF;
     private javax.swing.JTextField usernameTF;

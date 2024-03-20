@@ -43,7 +43,6 @@ public class HomePage extends javax.swing.JFrame {
         configureBtn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
 
-        setPreferredSize(new java.awt.Dimension(532, 343));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -52,7 +51,7 @@ public class HomePage extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        readWriteTagBtn.setBackground(new java.awt.Color(51, 153, 255));
+        readWriteTagBtn.setBackground(new java.awt.Color(136, 180, 67));
         readWriteTagBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         readWriteTagBtn.setForeground(new java.awt.Color(255, 255, 255));
         readWriteTagBtn.setText("Read/Write Tag");
@@ -62,7 +61,7 @@ public class HomePage extends javax.swing.JFrame {
             }
         });
 
-        configureBtn.setBackground(new java.awt.Color(51, 153, 255));
+        configureBtn.setBackground(new java.awt.Color(136, 180, 67));
         configureBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         configureBtn.setForeground(new java.awt.Color(255, 255, 255));
         configureBtn.setText("Configure");
@@ -72,7 +71,7 @@ public class HomePage extends javax.swing.JFrame {
             }
         });
 
-        jPanel2.setBackground(new java.awt.Color(51, 153, 255));
+        jPanel2.setBackground(new java.awt.Color(136, 180, 67));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
