@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.*;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JOptionPane;
 /**
@@ -242,17 +243,18 @@ public class Login extends javax.swing.JFrame {
             }
             status[j] = responseBody.charAt(i);
         }
-        statusStr = Arrays.toString(status);
+        //statusStr = toString(status);
+        statusStr = new String(status);
         System.out.println("status : " + statusStr);
-        if(statusStr.equals("Success"))
+        if(!statusStr.equals("Success"))
         {
             System.out.println("credentials correct");
         }
-        else if(statusStr.equalsIgnoreCase("Success"))
+        else if(!statusStr.equals("Success"))
         {
             System.out.println("Wrong Password");
         }
-        else if(statusStr.equalsIgnoreCase("Success"))
+        else if(!statusStr.equals("Success"))
         {
             System.out.println("Invalid email id");
         }
