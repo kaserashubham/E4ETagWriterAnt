@@ -145,74 +145,35 @@ public class Login extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        // TODO add your handling code here:
-//        HttpRequest getRequest;
-//	HttpClient client;
-//	HttpResponse<String> response;
-//        lp.setUsername(usernameTF.getText());
-//        String loginResp;
-//        try {
-//            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
-//            getRequest = HttpRequest.newBuilder()
-//                .GET()
-//                .timeout(Duration.ofSeconds(10))
-//                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
-//                .build();
-//            client = HttpClient.newHttpClient();
-//            response = client.send(getRequest, BodyHandlers.ofString());
-//            loginResp = response.body();
-//            //buff = loginResp.toCharArray();
-//            
-//            System.out.print(getRequest);
-//            System.out.print(loginResp);
-//            
-//            if(loginResp.charAt(1) == '1')
-//            {
-//                    //connStatus = true;
-//                lp.setAccessToken(loginResp.substring(3,9));
-//                System.out.println(lp.getAccessToken());
-//                this.setVisible(false);
-//                hp.setVisible(true);
-//                //lbConnStatus.setText("Connected");
-//                //btnLogout.setEnabled(true);
-//                //btnLogin.setEnabled(false);
-//                FileWriter fileWriter = new FileWriter("test.txt");
-//                PrintWriter printWriter = new PrintWriter(fileWriter); 
-//                printWriter.print("Login Succesful");
-//                printWriter.close();
-//            }
-//            else
-//            {
-//                JOptionPane.showMessageDialog(this, "Invalid Credentials", 
-//                                   "ERROR", JOptionPane.ERROR_MESSAGE);
-//                    //connStatus = false;
-//                    //lbConnStatus.setText("Invalid");
-//                    //btnLogout.setEnabled(false);
-//            }
-//
-//        } catch (Exception e1) {
-//                // TODO Auto-generated catch block
-//            e1.printStackTrace();
-//        }
-            //String body = "{\"name\": \"Apple iPad Air\", \"data\": { \"Generation\": \"4th\", \"Price\": \"519.99\", \"Capacity\": \"256 GB\" }}";
-            String body = "{\"email\": \"support@e4engineer.in\",\"password\": \"hemesh\"}";
-            String responseBody = "";
-            String statusBody = "statusMessage='",statusStr;
-            char status[] = new char[20];
-            int statusIndex = 0;
+    /*
+    0 - Wrong Response
+    1 - Correct Credentials
+    2 - Wrong Password
+    3 - Invalid Email ID
+    4 - Other Error
+    */
+    private char loginAuthenticated()
+    {
+        char retval = 0;
+        //String body = "{\"name\": \"Apple iPad Air\", \"data\": { \"Generation\": \"4th\", \"Price\": \"519.99\", \"Capacity\": \"256 GB\" }}";
+        String emailTxt = usernameTF.getText();
+        String passwordTxt = passwordTF.getText();
+        String body = "{\"email\": \"" + emailTxt + "\",\"password\": \"" + passwordTxt + "\"}";
+        String responseBody = "";
+        String statusBody = "statusMessage='",statusStr;
+        char status[] = new char[20];
+        int statusIndex = 0;
         //URL url;
         try {
-           URL url = new URL("http://34.199.80.64/android_login");
+            URL url = new URL(lp.URL + lp.loginAuthRequest);
             //URL url = new URL("https://api.restful-api.dev/objects");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setDoOutput(true);
-        conn.setRequestProperty("Content-Type", "application/json");
-        //conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-        System.out.println("Request body : " + body);
-        try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            //conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+            System.out.println("Request body : " + body);
+            try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
             dos.writeBytes(body);
             System.out.println("Request : " + body);
         }
@@ -230,7 +191,7 @@ public class Login extends javax.swing.JFrame {
         if(statusIndex == -1)
         {
             System.out.println("Wrong Response");
-            return;
+            return 0;
         }
         statusIndex += statusBody.length();
         System.out.println("statusIndex : " + statusIndex);
@@ -244,32 +205,142 @@ public class Login extends javax.swing.JFrame {
             status[j] = responseBody.charAt(i);
         }
         //statusStr = toString(status);
-        statusStr = new String(status);
+        statusStr = new String(status).trim();
         System.out.println("status : " + statusStr);
-        if(!statusStr.equals("Success"))
-        {
-            System.out.println("credentials correct");
+        byte[] bytes = statusStr.getBytes();
+        for (byte b : bytes) {
+            System.out.print(String.format("%02X ", b));
         }
-        else if(!statusStr.equals("Success"))
+        if(statusStr.equals("Success"))
+        {
+            System.out.println("credentials correct : " + statusStr.equals("Success"));
+            return 1;
+        }
+        if(statusStr.equals("Incorrect Password"))
         {
             System.out.println("Wrong Password");
+            return 2;
         }
-        else if(!statusStr.equals("Success"))
+        if(statusStr.equals("Invalid Email"))
         {
             System.out.println("Invalid email id");
+            return 3;
         }
-        else
-        {
-            System.out.println("other condition");
-        }
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        }catch(Exception e)
+        
+        System.out.println("other condition");
+        return 4;
+        
+        } catch(Exception e)
         {
             
         }
+        return retval;
+    }
+    /*
+    0 - login request fail
+    1 - login request success
+    2 - exception error
+     */
+    private char loginRequest()
+    {
+        HttpRequest getRequest;
+	HttpClient client;
+	HttpResponse<String> response;
+        lp.setUsername(usernameTF.getText());
+        String loginResp;
+        try {
+            //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
+            getRequest = HttpRequest.newBuilder()
+                .GET()
+                .timeout(Duration.ofSeconds(10))
+                .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
+                .build();
+            client = HttpClient.newHttpClient();
+            response = client.send(getRequest, BodyHandlers.ofString());
+            loginResp = response.body();
+            //buff = loginResp.toCharArray();
+            
+            System.out.print(getRequest);
+            System.out.print(loginResp);
+            
+            if(loginResp.charAt(1) == '1')
+            {
+                    //connStatus = true;
+                lp.setAccessToken(loginResp.substring(3,9));
+                System.out.println(lp.getAccessToken());
+                
+                return 1;
+            }
+            else
+            {
+                
+                    //connStatus = false;
+                    //lbConnStatus.setText("Invalid");
+                    //btnLogout.setEnabled(false);
+                return 0;
+            }
+
+        } catch (Exception e1) {
+                // TODO Auto-generated catch block
+            e1.printStackTrace();
+            return 2;
+        }
+        
+    }
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        // TODO add your handling code here:
+
+            
+            switch(loginAuthenticated())
+            {
+                case 0:
+                    break;
+                case 1:
+                    //succesfuly login
+                    
+                    break;
+                case 2:
+                    //wrong password
+                    JOptionPane.showMessageDialog(this, "Wrong Password", 
+                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+                    return;
+                case 3:
+                    //wrong email id
+                    JOptionPane.showMessageDialog(this, "Wrong Email ID", 
+                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+                    return;
+                case 4:
+                    //other
+                    JOptionPane.showMessageDialog(this, "Other Problem", 
+                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            
+            switch(loginRequest())
+            {
+                case 0:
+                    //0 - login request fail
+                    JOptionPane.showMessageDialog(this, "Invalid Credentials", 
+                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+                    break;
+                case 1:
+                    //1 - login request success
+                    this.setVisible(false);
+                    hp.setVisible(true);
+                    try
+                    {
+                        FileWriter fileWriter = new FileWriter("test.txt");
+                        PrintWriter printWriter = new PrintWriter(fileWriter); 
+                        printWriter.print("Login Succesful");
+                        printWriter.close();
+                    }catch(Exception e)
+                    {
+                        
+                    }
+                    break;
+                case 2:
+                    //2 - exception error
+                    break;
+            }
     }//GEN-LAST:event_loginBtnActionPerformed
 
     /**

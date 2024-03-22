@@ -18,6 +18,7 @@ public class LoginParameter {
     final String logoutRequest = "e_fuel_logout_req?data=";
     final String verifyVehicleRequest = "verify_vehicle_list?data=";
     final String updateVehicleRequest = "update_vehicle_list?data=";
+    final String loginAuthRequest = "android_login";
     public String getUsername()
     {
         return username;
