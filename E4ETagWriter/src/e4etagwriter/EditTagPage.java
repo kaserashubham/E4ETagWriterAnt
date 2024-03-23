@@ -230,6 +230,12 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[index++] = (byte) 0x00;
         buffer[index++] = (byte) 0x00;
         buffer[index++] = (byte) 0x55;
+        System.out.println("selected port :" + commPortParameter.selectedPort);
+        if((commPortParameter.selectedPort == null) || (!commPortParameter.selectedPort.isOpen()))
+        {
+            System.out.print("port not open");
+            return 4;
+        }
         commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
@@ -404,11 +410,16 @@ public class EditTagPage extends javax.swing.JFrame {
     1 - No Tag Found
     2 - Tag Write Succesful
     3 - No Resp Data
+    4 - device not connected
     */
     private char writeTag()
     {
         //char retval = 0;
-        
+        if((commPortParameter.selectedPort == null) || (!commPortParameter.selectedPort.isOpen()))
+        {
+            System.out.print("port not open");
+            return 4;
+        }
         commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
@@ -454,6 +465,11 @@ public class EditTagPage extends javax.swing.JFrame {
                 }
                 JOptionPane.showMessageDialog(this, "Tag Read Succesful\nReg No : " + regNoStr + "\nMax Fuel Limit : " + maxFuelLimit + "\nUID : " + uidStr, "Tag Read",JOptionPane.INFORMATION_MESSAGE);
             break;
+            case 4:
+                JOptionPane.showMessageDialog(this, "Device Not Connected", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
+                break;
         }
     }//GEN-LAST:event_readBtnActionPerformed
     char sendVerifyVehicleRequest()
@@ -640,6 +656,11 @@ public class EditTagPage extends javax.swing.JFrame {
                 System.out.println("tag reading successful.");
                 //JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
             break;
+            case 4:
+                JOptionPane.showMessageDialog(this, "Device Not Connected", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
+                break;
         }
         //read registration number from the table
         if(getSelectedVehicle() == 0)
@@ -769,6 +790,11 @@ public class EditTagPage extends javax.swing.JFrame {
             break;
             case 3:
             JOptionPane.showMessageDialog(this, "No Response Data", 
+                                      "INFORMATION", 
+                                      JOptionPane.INFORMATION_MESSAGE);
+            break;
+            case 4:
+            JOptionPane.showMessageDialog(this, "Device Not Connected", 
                                       "INFORMATION", 
                                       JOptionPane.INFORMATION_MESSAGE);
             break;
