@@ -44,6 +44,7 @@ public class ConfigPage extends javax.swing.JFrame {
         baudRateCB = new javax.swing.JComboBox<>();
         applyBtn = new javax.swing.JButton();
         cancelBtn = new javax.swing.JButton();
+        refreshPortBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -59,7 +60,7 @@ public class ConfigPage extends javax.swing.JFrame {
         baudRateCB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2400", "4800", "9600", "38400", "57600", "119200" }));
         baudRateCB.setSelectedIndex(2);
 
-        applyBtn.setText("Apply");
+        applyBtn.setText("Open");
         applyBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 applyBtnActionPerformed(evt);
@@ -73,26 +74,38 @@ public class ConfigPage extends javax.swing.JFrame {
             }
         });
 
+        refreshPortBtn.setText("Refresh Port");
+        refreshPortBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshPortBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(refreshPortBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 289, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(commPortCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(baudRateCB, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cancelBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(applyBtn)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 289, Short.MAX_VALUE)
+                                .addComponent(commPortCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 261, Short.MAX_VALUE)
+                                .addComponent(cancelBtn)
+                                .addGap(18, 18, 18)
+                                .addComponent(applyBtn))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(baudRateCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -102,15 +115,17 @@ public class ConfigPage extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(commPortCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(baudRateCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(refreshPortBtn)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(baudRateCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(applyBtn)
                     .addComponent(cancelBtn))
-                .addContainerGap(135, Short.MAX_VALUE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
 
         pack();
@@ -119,22 +134,34 @@ public class ConfigPage extends javax.swing.JFrame {
 
     private void applyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyBtnActionPerformed
         // TODO add your handling code here:
-        commPortParameter.selectedPort = commPortParameter.availablePorts[commPortCB.getSelectedIndex()];
-        commPortParameter.baudRate = Integer.parseInt(baudRateCB.getSelectedItem().toString());
-        commPortParameter.selectedPort.setComPortParameters(commPortParameter.baudRate,8,SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
-        //commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
         
-        commPortParameter.selectedPort.openPort();
-        if(commPortParameter.selectedPort.isOpen())
+        commPortParameter.selectedPort = commPortParameter.availablePorts[commPortCB.getSelectedIndex()];
+        if(!commPortParameter.selectedPort.isOpen())
         {
+            commPortParameter.baudRate = Integer.parseInt(baudRateCB.getSelectedItem().toString());
+            commPortParameter.selectedPort.setComPortParameters(commPortParameter.baudRate,8,SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
+            //commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
+
+            commPortParameter.selectedPort.openPort();
+        //if(commPortParameter.selectedPort.isOpen())
+        //{
             //serialEventBasedReading(commPortParameter.selectedPort);
             dispose();
+            applyBtn.setText("Close");
+            commPortCB.setEnabled(false);
+            baudRateCB.setEnabled(false);
+            refreshPortBtn.setEnabled(false);
             hp.setVisible(true);
+        //}
         }
         else
         {
-            JOptionPane.showMessageDialog(this, "Port Already Open", 
-                                   "ERROR", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(this, "Port Already Open","ERROR", JOptionPane.ERROR_MESSAGE);
+            commPortParameter.selectedPort.closePort();
+            commPortCB.setEnabled(true);
+            baudRateCB.setEnabled(true);
+            refreshPortBtn.setEnabled(true);
+            applyBtn.setText("Open");
         }
     }//GEN-LAST:event_applyBtnActionPerformed
 
@@ -146,6 +173,15 @@ public class ConfigPage extends javax.swing.JFrame {
         dispose();
         hp.setVisible(true);
     }//GEN-LAST:event_cancelBtnActionPerformed
+
+    private void refreshPortBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshPortBtnActionPerformed
+        commPortCB.removeAllItems();
+        commPortParameter.availablePorts = SerialPort.getCommPorts();
+        for(SerialPort S : commPortParameter.availablePorts)
+        {
+            commPortCB.addItem(S);
+        }
+    }//GEN-LAST:event_refreshPortBtnActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -189,6 +225,7 @@ public class ConfigPage extends javax.swing.JFrame {
     private javax.swing.JComboBox<SerialPort> commPortCB;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton refreshPortBtn;
     // End of variables declaration//GEN-END:variables
 
 }
