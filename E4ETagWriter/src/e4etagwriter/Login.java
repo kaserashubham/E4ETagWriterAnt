@@ -4,6 +4,7 @@
  */
 package e4etagwriter;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import static e4etagwriter.HomePage.hp;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -373,6 +374,7 @@ public class Login extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        FlatLightLaf.setup();
         //</editor-fold>
 
         /* Create and display the form */

@@ -61,6 +61,9 @@ public class EditTagPage extends javax.swing.JFrame {
         writeTagBtn = new javax.swing.JButton();
         readBtn = new javax.swing.JButton();
         filterTextField = new javax.swing.JTextField();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -109,6 +112,11 @@ public class EditTagPage extends javax.swing.JFrame {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Device Status : ");
+
+        jLabel4.setText("Disconneted");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -126,6 +134,16 @@ public class EditTagPage extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(42, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,7 +157,13 @@ public class EditTagPage extends javax.swing.JFrame {
                     .addComponent(refreshBtn)
                     .addComponent(writeTagBtn)
                     .addComponent(readBtn))
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addContainerGap(7, Short.MAX_VALUE))
         );
 
         pack();
@@ -207,6 +231,10 @@ public class EditTagPage extends javax.swing.JFrame {
                 
             }
         }
+        catch(java.net.ConnectException e)
+        {
+            System.out.print("No network");
+        }
         catch(Exception e1) {
                 // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -231,7 +259,7 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[index++] = (byte) 0x00;
         buffer[index++] = (byte) 0x55;
         System.out.println("selected port :" + commPortParameter.selectedPort);
-        if((commPortParameter.selectedPort == null) || (!commPortParameter.selectedPort.isOpen()))
+        if((commPortParameter.selectedPort == null) || (!commPortParameter.deviceConnected))
         {
             System.out.print("port not open");
             return 4;
@@ -415,7 +443,7 @@ public class EditTagPage extends javax.swing.JFrame {
     private char writeTag()
     {
         //char retval = 0;
-        if((commPortParameter.selectedPort == null) || (!commPortParameter.selectedPort.isOpen()))
+        if((commPortParameter.selectedPort == null) || (!commPortParameter.deviceConnected))
         {
             System.out.print("port not open");
             return 4;
@@ -868,7 +896,10 @@ public class EditTagPage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField filterTextField;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton readBtn;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JTable vehicleListTable;

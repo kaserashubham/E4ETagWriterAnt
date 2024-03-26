@@ -22,6 +22,7 @@ public class SerialComm {
     final int READ_TIMEOUT = 500;
     static byte recvData[] = new byte[100];
     static boolean respRecv = false;
+    static boolean deviceConnected = false;
     static int dataLen = 0;
     public static void serialEventBasedReading(SerialPort activePort) 
     {
