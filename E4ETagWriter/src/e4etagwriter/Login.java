@@ -8,6 +8,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import static e4etagwriter.HomePage.hp;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,6 +19,9 @@ import java.net.URI;
 import java.net.URL;
 import java.net.http.*;
 import java.net.http.HttpResponse.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -331,12 +335,29 @@ public class Login extends javax.swing.JFrame {
                     //1 - login request success
                     this.setVisible(false);
                     hp.setVisible(true);
+                    System.out.println("Login Successful");
+                    String path = System.getProperty("user.dir") + "\\logs\\test.txt";
+                    String dirPath = System.getProperty("user.dir") + "/logs";
+                    File dir = new File(dirPath);
+                    if(!dir.exists())
+                    {
+                        dir.mkdir();
+                    }
+                    System.out.println("File Path : " + path);
+                    String text = "\nLogin Sucessfull";
                     try
                     {
-                        FileWriter fileWriter = new FileWriter("test.txt");
-                        PrintWriter printWriter = new PrintWriter(fileWriter); 
-                        printWriter.print("Login Succesful");
-                        printWriter.close();
+//                        FileWriter fileWriter = new FileWriter("test.txt");
+//                        PrintWriter printWriter = new PrintWriter(fileWriter); 
+//                        printWriter.print("Login Succesful");
+//                        printWriter.close();
+                        //String path = System.getProperty("user.dir") + "\\src\\test.txt";
+                        
+                        //Files.write(Paths.get(path), text.getBytes(), StandardOpenOption.APPEND);
+                        FileWriter fw = new FileWriter(path,true);
+                        fw.write(text);
+                        fw.close();
+                        System.out.print("File write succesful");
                     }catch(Exception e)
                     {
                         
