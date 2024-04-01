@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -336,7 +337,17 @@ public class Login extends javax.swing.JFrame {
                     this.setVisible(false);
                     hp.setVisible(true);
                     System.out.println("Login Successful");
-                    String path = System.getProperty("user.dir") + "\\logs\\test.txt";
+                    Calendar c = Calendar.getInstance();
+                    
+                    //LocalDateTime currentDateTime = LocalDateTime.now(); 
+                    //System.out.println("Current date and time: " + currentDateTime); 
+                    String path = System.getProperty("user.dir") + "\\logs\\log_" + 
+                            c.get(Calendar.YEAR)   + 
+                            c.get(Calendar.MONTH)  + 
+                            c.get(Calendar.DATE)   + 
+                            c.get(Calendar.HOUR_OF_DAY)   + 
+                            c.get(Calendar.MINUTE) + 
+                            c.get(Calendar.SECOND);
                     String dirPath = System.getProperty("user.dir") + "/logs";
                     File dir = new File(dirPath);
                     if(!dir.exists())
