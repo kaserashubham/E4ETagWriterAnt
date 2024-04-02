@@ -40,6 +40,7 @@ public class Login extends javax.swing.JFrame {
      * Creates new form Login
      */
     static LoginParameter lp = new LoginParameter();
+    static Main mainClass = new Main();
     //static HomePage hp = new HomePage();
     public Login() {
         initComponents();
@@ -183,9 +184,11 @@ public class Login extends javax.swing.JFrame {
             conn.setRequestProperty("Content-Type", "application/json");
             //conn.setRequestProperty("User-Agent", "Mozilla/5.0");
             System.out.println("Request body : " + body);
+            mainClass.saveLog("Request body : " + body);
             try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
             dos.writeBytes(body);
             System.out.println("Request : " + body);
+            mainClass.saveLog("URL : " + url);
         }
 
         try (BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
@@ -196,6 +199,7 @@ public class Login extends javax.swing.JFrame {
             }
         }
         System.out.println("responseBody : " + responseBody);
+        mainClass.saveLog("responseBody : " + responseBody);
         statusIndex = responseBody.indexOf(statusBody);
                 
         if(statusIndex == -1)
@@ -337,42 +341,24 @@ public class Login extends javax.swing.JFrame {
                     this.setVisible(false);
                     hp.setVisible(true);
                     System.out.println("Login Successful");
-                    Calendar c = Calendar.getInstance();
-                    
-                    //LocalDateTime currentDateTime = LocalDateTime.now(); 
-                    //System.out.println("Current date and time: " + currentDateTime); 
-                    String path = System.getProperty("user.dir") + "\\logs\\log_" + 
-                            c.get(Calendar.YEAR)   + 
-                            c.get(Calendar.MONTH)  + 
-                            c.get(Calendar.DATE)   + 
-                            c.get(Calendar.HOUR_OF_DAY)   + 
-                            c.get(Calendar.MINUTE) + 
-                            c.get(Calendar.SECOND);
-                    String dirPath = System.getProperty("user.dir") + "/logs";
-                    File dir = new File(dirPath);
-                    if(!dir.exists())
-                    {
-                        dir.mkdir();
-                    }
-                    System.out.println("File Path : " + path);
-                    String text = "\nLogin Sucessfull";
-                    try
-                    {
-//                        FileWriter fileWriter = new FileWriter("test.txt");
-//                        PrintWriter printWriter = new PrintWriter(fileWriter); 
-//                        printWriter.print("Login Succesful");
-//                        printWriter.close();
-                        //String path = System.getProperty("user.dir") + "\\src\\test.txt";
-                        
-                        //Files.write(Paths.get(path), text.getBytes(), StandardOpenOption.APPEND);
-                        FileWriter fw = new FileWriter(path,true);
-                        fw.write(text);
-                        fw.close();
-                        System.out.print("File write succesful");
-                    }catch(Exception e)
-                    {
-                        
-                    }
+                    mainClass.saveLog("Login Successfull");
+//                    try
+//                    {
+////                        FileWriter fileWriter = new FileWriter("test.txt");
+////                        PrintWriter printWriter = new PrintWriter(fileWriter); 
+////                        printWriter.print("Login Succesful");
+////                        printWriter.close();
+//                        //String path = System.getProperty("user.dir") + "\\src\\test.txt";
+//                        
+//                        //Files.write(Paths.get(path), text.getBytes(), StandardOpenOption.APPEND);
+//                        FileWriter fw = new FileWriter(,true);
+//                        fw.write(text);
+//                        fw.close();
+//                        System.out.print("File write succesful");
+//                    }catch(Exception e)
+//                    {
+//                        
+//                    }
                     break;
                 case 2:
                     //2 - exception error
@@ -383,39 +369,39 @@ public class Login extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        FlatLightLaf.setup();
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Login().setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        FlatLightLaf.setup();
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new Login().setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
