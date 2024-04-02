@@ -8,6 +8,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import static e4etagwriter.HomePage.hp;
 import static e4etagwriter.SerialComm.commPortParameter;
 import static e4etagwriter.Login.lp;
+import static e4etagwriter.Login.mainClass;
 import static e4etagwriter.SerialComm.dataLen;
 import static e4etagwriter.SerialComm.recvData;
 import static e4etagwriter.SerialComm.selectedPort;
@@ -182,7 +183,7 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             HttpRequest getRequest = HttpRequest.newBuilder()
                 .GET()
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(mainClass.httpTimeout))
                 .uri(URI.create((lp.URL + lp.getVehicleListRequest + lp.getAccessToken())))
                 .build();
             HttpClient client = HttpClient.newHttpClient();
@@ -509,7 +510,7 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             HttpRequest getRequest = HttpRequest.newBuilder()
                     .GET()
-                    .timeout(Duration.ofSeconds(10))
+                    .timeout(Duration.ofSeconds(mainClass.httpTimeout))
                     //.uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
                     .uri(URI.create(verifyRequest))
                     .build();
@@ -576,7 +577,7 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             HttpRequest getRequest = HttpRequest.newBuilder()
                     .GET()
-                    .timeout(Duration.ofSeconds(10))
+                    .timeout(Duration.ofSeconds(mainClass.httpTimeout))
                     //.uri(URI.create((lp.URL + lp.verifyVehicleRequest + lp.getAccessToken() /*+ reg no + uid*/ )))
                     .uri(URI.create(updateRequest))
                     .build();

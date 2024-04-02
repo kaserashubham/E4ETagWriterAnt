@@ -266,7 +266,7 @@ public class Login extends javax.swing.JFrame {
             //getRequest = HttpRequest.newBuilder(new URI(lp.URL + lp.loginRequest + lp.getUsername())).build();
             getRequest = HttpRequest.newBuilder()
                 .GET()
-                .timeout(Duration.ofSeconds(10))
+                .timeout(Duration.ofSeconds(mainClass.httpTimeout))
                 .uri(URI.create((lp.URL + lp.loginRequest + lp.getUsername())))
                 .build();
             client = HttpClient.newHttpClient();

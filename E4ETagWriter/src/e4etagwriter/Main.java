@@ -5,12 +5,18 @@
 package e4etagwriter;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import static e4etagwriter.Login.lp;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.security.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -18,10 +24,13 @@ import java.util.Date;
  */
 public class Main {
     private static String logFileName = "";
+    final int httpTimeout = 4;
     public static void main(String args[])
     {
         saveLog("E4Engineer Tag Writer");
+        
         FlatLightLaf.setup();
+        readConfiguration();
         setLogFileName();
         new Login().setVisible(true);
         
@@ -60,5 +69,20 @@ public class Main {
         {
 
         }
+    }
+    
+    public static void readConfiguration()
+    {
+        JSONParser parser = new JSONParser();
+        try {
+         Object obj = parser.parse(new FileReader("config.json"));
+         JSONObject jsonObject = (JSONObject)obj;
+         String server = (String)jsonObject.get("Server");
+         lp.URL = "http://" + server + "/";
+         //System.out.println("Server: " + lp.URL);
+         saveLog("Server: " + lp.URL);
+      } catch(Exception e) {
+         e.printStackTrace();
+      }
     }
 }

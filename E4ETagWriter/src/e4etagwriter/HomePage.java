@@ -14,6 +14,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import javax.swing.JFrame;
 import static e4etagwriter.ConfigPage.configPage;
+import static e4etagwriter.Login.mainClass;
 /**
  *
  * @author shubham
@@ -168,7 +169,7 @@ public class HomePage extends javax.swing.JFrame {
                 {
                     HttpRequest getRequest = HttpRequest.newBuilder()
                             .GET()
-                            .timeout(Duration.ofSeconds(2))
+                            .timeout(Duration.ofSeconds(mainClass.httpTimeout))
                             .uri(URI.create((lp.URL + lp.logoutRequest + lp.getAccessToken())))
                             .build();
                     HttpClient client = HttpClient.newHttpClient();

@@ -1,4 +1,0 @@
-2024-04-02T15:52:25.801162200 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
-2024-04-02T15:52:26.140350800 : URL : http://34.199.80.64/android_login
-2024-04-02T15:52:26.507754500 : responseBody : <table border="0" cellpadding="4" cellspacing="0"><thead><tr><th>status</th><th>statusMessage</th><th>data</th></tr></thead><tbody><tr><td statusMessage='Success' status='success'></td></tr></tbody></table>
-2024-04-02T15:52:28.672826300 : Login Successfull
