@@ -20,7 +20,7 @@ public class Main {
     private static String logFileName = "";
     public static void main(String args[])
     {
-        System.out.println("E4Engineer Tag Writer");
+        saveLog("E4Engineer Tag Writer");
         FlatLightLaf.setup();
         setLogFileName();
         new Login().setVisible(true);
@@ -55,7 +55,7 @@ public class Main {
             LocalDateTime currentDateTime = LocalDateTime.now(); 
             fw.write(currentDateTime + " : " + log + "\n");
             fw.close();
-            System.out.print("File write succesful");
+            //saveLog("File write succesful");
         }catch(Exception e)
         {
 

@@ -29,6 +29,7 @@ import javax.swing.table.TableRowSorter;
  */
 public class EditTagPage extends javax.swing.JFrame {
 
+    static Main mainClass = new Main();
     /**
      * Creates new form EditTagPage
      */
@@ -189,8 +190,8 @@ public class EditTagPage extends javax.swing.JFrame {
             vehicleListResp = response.body();
             //buff = loginResp.toCharArray();
             
-            System.out.print(getRequest);
-            System.out.print(vehicleListResp);
+            mainClass.saveLog(getRequest.toString());
+            mainClass.saveLog(vehicleListResp);
             
             int noOfVehicle = 0;
             
@@ -203,7 +204,7 @@ public class EditTagPage extends javax.swing.JFrame {
                 }
             }
             
-            System.out.println("\nNumber of Vehicle : " + noOfVehicle);
+            mainClass.saveLog("\nNumber of Vehicle : " + noOfVehicle);
             
             tblModel = (DefaultTableModel)vehicleListTable.getModel();
             tblModel.setRowCount(0);
@@ -220,9 +221,9 @@ public class EditTagPage extends javax.swing.JFrame {
                     indx += 10;
                     maxFuelLimit = Arrays.copyOfRange(list, indx, indx + 4);
                     indx += 5;
-                    System.out.println("index:" + indx + " " + new String(regNo).replaceAll("@", "") + " " + new String(maxFuelLimit));
+                    mainClass.saveLog("index:" + indx + " " + new String(regNo).replaceAll("@", "") + " " + new String(maxFuelLimit));
                     Object[] data = {new String(regNo).replaceAll("@", ""),Integer.valueOf(new String(maxFuelLimit))};
-                    //System.out.println(a);
+                    //mainClass.saveLog(a);
                     tblModel.addRow(data);
                 }
             }
@@ -233,7 +234,7 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         catch(java.net.ConnectException e)
         {
-            System.out.print("No network");
+            mainClass.saveLog("No network");
         }
         catch(Exception e1) {
                 // TODO Auto-generated catch block
@@ -258,10 +259,10 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[index++] = (byte) 0x00;
         buffer[index++] = (byte) 0x00;
         buffer[index++] = (byte) 0x55;
-        System.out.println("selected port :" + commPortParameter.selectedPort);
+        mainClass.saveLog("selected port :" + commPortParameter.selectedPort);
         if((commPortParameter.selectedPort == null) || (!commPortParameter.deviceConnected))
         {
-            System.out.print("port not open");
+            mainClass.saveLog("port not open");
             return 4;
         }
         commPortParameter.selectedPort.writeBytes(buffer, index);
@@ -271,10 +272,10 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             int readLen = selectedPort.bytesAvailable();
                 int len = selectedPort.readBytes(recvData, readLen);
-                System.out.println("data read blocking");
+                mainClass.saveLog("data read blocking");
                 for(int i = 0; i < readLen; i++)
                 {
-                    System.out.print(String.format(" %02X", recvData[i]));
+                    mainClass.saveLog(String.format(" %02X", recvData[i]));
                 }
                 //now we can decode the complete data;
                 //decode the data and show it to the Dialog box
@@ -282,48 +283,48 @@ public class EditTagPage extends javax.swing.JFrame {
                 int i = 0;
                 if((recvData[i++]&0xFF) != 0xAA)
                 {
-                    System.out.println("header not found");
+                    mainClass.saveLog("header not found");
                     return 0;
                 }
                 length = (recvData[i++] & 0xFF);
                 if((recvData[i++] & 0x7F) != 0x00)
                 {
-                    System.out.println("invalid response code");
+                    mainClass.saveLog("invalid response code");
                     return 0;
                 }
                 if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
                 {
-                    System.out.println("nack");
+                    mainClass.saveLog("nack");
                     return 0;
                 }
                 i++;//skipping checksum
                 if((recvData[i++] & 0x7F) != 0x55)
                 {
-                    System.out.println("no footer");
+                    mainClass.saveLog("no footer");
                     return 0;
                 }
                 
-                System.out.println("first response ok");
+                mainClass.saveLog("first response ok");
                 
                 if((recvData[i++]&0xFF) != 0xAA)
                 {
-                    System.out.println("second header not found");
+                    mainClass.saveLog("second header not found");
                     return 0;
                 }
                 length = (recvData[i++] & 0xFF);
                 if(((recvData[i++] & 0x7F) != 0x00))
                 {
-                    System.out.println("second invalid response code");
+                    mainClass.saveLog("second invalid response code");
                     return 0;
                 }
                 
                 if(((recvData[i] & 0x7F) == 0x14))
                 {
-                    System.out.println("no tag found");
+                    mainClass.saveLog("no tag found");
                     
                     return 1;
                 }
-                System.out.println("tag found " + String.format("%02X", recvData[i]));
+                mainClass.saveLog("tag found " + String.format("%02X", recvData[i]));
                 //System.arraycopy(recvData, i, regNo, 0, 10);
                 index = 0;
                 for(int j = 0; j < 10; j++)
@@ -335,15 +336,15 @@ public class EditTagPage extends javax.swing.JFrame {
                     }
                     i++;
                 }
-                System.out.print("reg no : ");
+                mainClass.saveLog("reg no : ");
                 for(int j = 0; j < index; j++)
                 {
-                    System.out.print(String.format("%02X ", tagRegNo[j]));
+                    mainClass.saveLog(String.format("%02X ", tagRegNo[j]));
                 }
-                System.out.println();
+                //mainClass.saveLog();
                 maxFuelLimit = (recvData[i++] & 0xFF);
                 maxFuelLimit |= ((recvData[i++] & 0xFF) << 8);
-                System.out.println("fuel limit : " + maxFuelLimit);
+                mainClass.saveLog("fuel limit : " + maxFuelLimit);
                 
                 i += 4;
                 index = 0;
@@ -351,22 +352,22 @@ public class EditTagPage extends javax.swing.JFrame {
                 {
                     uid[index++] = recvData[i++];
                 }
-                System.out.print("uid : ");
+                mainClass.saveLog("uid : ");
                 for(int j = 0; j < index; j++)
                 {
-                    System.out.print(String.format("%02X ", uid[j]));
+                    mainClass.saveLog(String.format("%02X ", uid[j]));
                 }
                 
 //                if((recvData[i++] & 0x7F) != 0x55)
 //                {
-//                    System.out.println("no footer");
+//                    mainClass.saveLog("no footer");
 //                    return;
 //                }
                     return 3;
         }
         else
         {
-            System.out.print("No data avl");
+            mainClass.saveLog("No data avl");
             
             return 2;
         }
@@ -384,50 +385,50 @@ public class EditTagPage extends javax.swing.JFrame {
         int i = 0, length;
         if((recvData[i++]&0xFF) != 0xAA)
         {
-            System.out.println("header not found");
+            mainClass.saveLog("header not found");
             return 0;
         }
         length = (recvData[i++] & 0xFF);
         if((recvData[i++] & 0x7F) != 0x01)
         {
-            System.out.println("invalid response code");
+            mainClass.saveLog("invalid response code");
             return 0;
         }
         if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
         {
-            System.out.println("nack");
+            mainClass.saveLog("nack");
             return 0;
         }
         i++;//skipping checksum
         if((recvData[i++] & 0x7F) != 0x55)
         {
-            System.out.println("no footer");
+            mainClass.saveLog("no footer");
             return 0;
         }
 
-        System.out.println("first response ok");
+        mainClass.saveLog("first response ok");
 
         if((recvData[i++]&0xFF) != 0xAA)
         {
-            System.out.println("second header not found");
+            mainClass.saveLog("second header not found");
             return 0;
         }
         length = (recvData[i++] & 0xFF);
         if(((recvData[i++] & 0x7F) != 0x01))
         {
-            System.out.println("second invalid response code");
+            mainClass.saveLog("second invalid response code");
             return 0;
         }
 
         if(((recvData[i] & 0x7F) == 0x14))
         {
-            System.out.println("no tag found");
+            mainClass.saveLog("no tag found");
 
             return 1;
         }
         else if(((recvData[i] & 0x7F) == 0x13))
         {
-            System.out.println("Tag write successful");
+            mainClass.saveLog("Tag write successful");
 
             return 2;
         }
@@ -445,7 +446,7 @@ public class EditTagPage extends javax.swing.JFrame {
         //char retval = 0;
         if((commPortParameter.selectedPort == null) || (!commPortParameter.deviceConnected))
         {
-            System.out.print("port not open");
+            mainClass.saveLog("port not open");
             return 4;
         }
         commPortParameter.selectedPort.writeBytes(buffer, index);
@@ -454,15 +455,15 @@ public class EditTagPage extends javax.swing.JFrame {
         if (commPortParameter.selectedPort.bytesAvailable() > 0) {
             int readLen = selectedPort.bytesAvailable();
             int len = selectedPort.readBytes(recvData, readLen);
-            System.out.println("data read blocking");
+            mainClass.saveLog("data read blocking");
             for (int i = 0; i < readLen; i++) {
-                System.out.print(String.format(" %02X", recvData[i]));
+                mainClass.saveLog(String.format(" %02X", recvData[i]));
             }
             //now we can decode the complete data;
             return parseWriteTagResp(recvData,readLen);
             //decode the data and show it to the Dialog box
         } else {
-            System.out.print("No data avl");
+            mainClass.saveLog("No data avl");
             return 3;
         }
     }
@@ -513,47 +514,47 @@ public class EditTagPage extends javax.swing.JFrame {
                     .uri(URI.create(verifyRequest))
                     .build();
             HttpClient client = HttpClient.newHttpClient();
-            System.out.println("logout request prepared");
+            mainClass.saveLog("logout request prepared");
             HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
             String verifyVehicleResp = response.body();
             //buff = loginResp.toCharArray();
 
-            System.out.print(getRequest);
-            System.out.print(verifyVehicleResp);
+            mainClass.saveLog(getRequest.toString());
+            mainClass.saveLog(verifyVehicleResp);
             if(verifyVehicleResp.charAt(1) == '1')
             {
-                System.out.println("session active");
+                mainClass.saveLog("session active");
                 retval = (char) (verifyVehicleResp.charAt(3) - '0');
                 switch(verifyVehicleResp.charAt(3))
                 {
                     case '0':
-                        System.out.println("Allowed");
+                        mainClass.saveLog("Allowed");
                         
                         break;
                         case '1':
-                        System.out.println("Update");
+                        mainClass.saveLog("Update");
                         break;
                         case '2':
-                        System.out.println("Disabled");
+                        mainClass.saveLog("Disabled");
                         break;
                         case '3':
-                        System.out.println("Assigned");
+                        mainClass.saveLog("Assigned");
                         break;
                         case '4':
-                        System.out.println("Not Available");
+                        mainClass.saveLog("Not Available");
                         break;
                         case '5':
-                        System.out.println("Limit Exceeded");
+                        mainClass.saveLog("Limit Exceeded");
                         break;
                         default:
-                            System.out.println("Unknown Response");
+                            mainClass.saveLog("Unknown Response");
                             retval = 100;
                             break;
                 }
             }
             else if(verifyVehicleResp.charAt(1) == '0')
             {
-                System.out.println("session expired");
+                mainClass.saveLog("session expired");
                 retval = 101;
             }
             /*
@@ -580,21 +581,21 @@ public class EditTagPage extends javax.swing.JFrame {
                     .uri(URI.create(updateRequest))
                     .build();
             HttpClient client = HttpClient.newHttpClient();
-            System.out.println("logout request prepared");
+            mainClass.saveLog("logout request prepared");
             HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
             String updateVehicleResp = response.body();
             //buff = loginResp.toCharArray();
 
-            System.out.print(getRequest);
-            System.out.print(updateVehicleResp);
+            mainClass.saveLog(getRequest.toString());
+            mainClass.saveLog(updateVehicleResp);
             if(updateVehicleResp.charAt(1) == '1')
             {
                 retval = 1;
-                System.out.println("Vehicle Update Succesful");
+                mainClass.saveLog("Vehicle Update Succesful");
             }
             else if(updateVehicleResp.charAt(1) == '0')
             {
-                System.out.println("session expired");
+                mainClass.saveLog("session expired");
                 retval = 0;
             }
             /*
@@ -630,7 +631,7 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[index++] = (byte) 0x55;
         for(int i = 0; i < index; i++)
         {
-            System.out.print(String.format(" %02X", buffer[i]));
+            mainClass.saveLog(String.format(" %02X", buffer[i]));
         }
     }
     private void filter(String query)
@@ -645,7 +646,7 @@ public class EditTagPage extends javax.swing.JFrame {
         //char retval = 0;
         tblRegNo = "";
         tblMaxFuelLimit = "";
-        System.out.println("Selected row : " + vehicleListTable.getSelectedRow());
+        mainClass.saveLog("Selected row : " + vehicleListTable.getSelectedRow());
         if(vehicleListTable.getSelectedRow() == -1)
         {
             return (char) 0;
@@ -653,7 +654,7 @@ public class EditTagPage extends javax.swing.JFrame {
         //tblRegNo = vehicleListTable.getModel().getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
         tblRegNo = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 0).toString();
         tblMaxFuelLimit = vehicleListTable.getValueAt(vehicleListTable.getSelectedRow(), 1).toString();
-        System.out.println("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
+        mainClass.saveLog("Selected Data : " + tblRegNo + " " + tblMaxFuelLimit);
         //retval = (char) vehicleListTable.getSelectedRow();
         return 1;
     }
@@ -681,7 +682,7 @@ public class EditTagPage extends javax.swing.JFrame {
             //break;
             case 3: 
                 //tag read succesful
-                System.out.println("tag reading successful.");
+                mainClass.saveLog("tag reading successful.");
                 //JOptionPane.showMessageDialog(this, "Tag Read Succesful", "Tag Read",JOptionPane.INFORMATION_MESSAGE);
             break;
             case 4:
@@ -693,7 +694,7 @@ public class EditTagPage extends javax.swing.JFrame {
         //read registration number from the table
         if(getSelectedVehicle() == 0)
         {
-            System.out.println("No Vehicle Selected");
+            mainClass.saveLog("No Vehicle Selected");
             JOptionPane.showMessageDialog(this, "No Vehicle Selected", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);
@@ -710,53 +711,53 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             verifyRequest = verifyRequest.concat(String.format("%02X", uid[j]));
         }
-        System.out.print("Verify Request :" + verifyRequest);
+        mainClass.saveLog("Verify Request :" + verifyRequest);
         //send verify request
         boolean tagUpdated = false;
         switch(sendVerifyVehicleRequest())
         {
             case 0:
-                System.out.println("Write new tag");
+                mainClass.saveLog("Write new tag");
                 
             break;
             case 1:
-                System.out.println("Update old tag");
+                mainClass.saveLog("Update old tag");
                 tagUpdated = true;
             break;
             case 2:
-                System.out.println("The tag is disabled");
+                mainClass.saveLog("The tag is disabled");
                 return;
             //break;
             case 3:
-                System.out.println("The tag is already assigned");
+                mainClass.saveLog("The tag is already assigned");
                 JOptionPane.showMessageDialog(this, "Tag Already Assigned", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 4:
-                System.out.println("Not in the list");
+                mainClass.saveLog("Not in the list");
                 JOptionPane.showMessageDialog(this, "Vehicle Not In The List", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 5:
-                System.out.println("The list is overflowed");
+                mainClass.saveLog("The list is overflowed");
                 JOptionPane.showMessageDialog(this, "Vehicle List Overflowed", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 100:
-                System.out.println("Other reason");
+                mainClass.saveLog("Other reason");
                 JOptionPane.showMessageDialog(this, "Tag Allocation Failed", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);
             return;
             //break;
             case 101:
-                System.out.println("Session is expired");
+                mainClass.saveLog("Session is expired");
                 JOptionPane.showMessageDialog(this, "Session Expired, Please Login Again", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);
@@ -771,11 +772,11 @@ public class EditTagPage extends javax.swing.JFrame {
         {
             updateRequest = updateRequest.concat(String.format("%02X", uid[j]));
         }
-        System.out.print("Update Request :" + updateRequest);
+        mainClass.saveLog("Update Request :" + updateRequest);
         switch(sendUpdateVehicleRequest())
         {
             case 0:
-                System.out.println("Session end");
+                mainClass.saveLog("Session end");
                 JOptionPane.showMessageDialog(this, "Session Expired, Please Login Again", 
                                           "INFORMATION", 
                                           JOptionPane.INFORMATION_MESSAGE);

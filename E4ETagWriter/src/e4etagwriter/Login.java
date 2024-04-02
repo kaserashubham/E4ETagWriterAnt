@@ -183,32 +183,32 @@ public class Login extends javax.swing.JFrame {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
             //conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-            System.out.println("Request body : " + body);
+            mainClass.saveLog("Request body : " + body);
             mainClass.saveLog("Request body : " + body);
             try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
             dos.writeBytes(body);
-            System.out.println("Request : " + body);
+            mainClass.saveLog("Request : " + body);
             mainClass.saveLog("URL : " + url);
         }
 
         try (BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
             String line;
             while ((line = bf.readLine()) != null) {
-                //System.out.println(line);
+                //mainClass.saveLog(line);
                 responseBody += line;
             }
         }
-        System.out.println("responseBody : " + responseBody);
+        mainClass.saveLog("responseBody : " + responseBody);
         mainClass.saveLog("responseBody : " + responseBody);
         statusIndex = responseBody.indexOf(statusBody);
                 
         if(statusIndex == -1)
         {
-            System.out.println("Wrong Response");
+            mainClass.saveLog("Wrong Response");
             return 0;
         }
         statusIndex += statusBody.length();
-        System.out.println("statusIndex : " + statusIndex);
+        mainClass.saveLog("statusIndex : " + statusIndex);
         int i,j;
         for(i = statusIndex,j = 0;;i++,j++)
         {
@@ -220,28 +220,28 @@ public class Login extends javax.swing.JFrame {
         }
         //statusStr = toString(status);
         statusStr = new String(status).trim();
-        System.out.println("status : " + statusStr);
+        mainClass.saveLog("status : " + statusStr);
         byte[] bytes = statusStr.getBytes();
         for (byte b : bytes) {
-            System.out.print(String.format("%02X ", b));
+            mainClass.saveLog(String.format("%02X ", b));
         }
         if(statusStr.equals("Success"))
         {
-            System.out.println("credentials correct : " + statusStr.equals("Success"));
+            mainClass.saveLog("credentials correct : " + statusStr.equals("Success"));
             return 1;
         }
         if(statusStr.equals("Incorrect Password"))
         {
-            System.out.println("Wrong Password");
+            mainClass.saveLog("Wrong Password");
             return 2;
         }
         if(statusStr.equals("Invalid Email"))
         {
-            System.out.println("Invalid email id");
+            mainClass.saveLog("Invalid email id");
             return 3;
         }
         
-        System.out.println("other condition");
+        mainClass.saveLog("other condition");
         return 4;
         
         } catch(Exception e)
@@ -274,14 +274,14 @@ public class Login extends javax.swing.JFrame {
             loginResp = response.body();
             //buff = loginResp.toCharArray();
             
-            System.out.print(getRequest);
-            System.out.print(loginResp);
+            mainClass.saveLog(getRequest.toString());
+            mainClass.saveLog(loginResp);
             
             if(loginResp.charAt(1) == '1')
             {
                     //connStatus = true;
                 lp.setAccessToken(loginResp.substring(3,9));
-                System.out.println(lp.getAccessToken());
+                mainClass.saveLog(lp.getAccessToken());
                 
                 return 1;
             }
@@ -340,7 +340,7 @@ public class Login extends javax.swing.JFrame {
                     //1 - login request success
                     this.setVisible(false);
                     hp.setVisible(true);
-                    System.out.println("Login Successful");
+                    mainClass.saveLog("Login Successful");
                     mainClass.saveLog("Login Successfull");
 //                    try
 //                    {
@@ -354,7 +354,7 @@ public class Login extends javax.swing.JFrame {
 //                        FileWriter fw = new FileWriter(,true);
 //                        fw.write(text);
 //                        fw.close();
-//                        System.out.print("File write succesful");
+//                        mainClass.saveLog("File write succesful");
 //                    }catch(Exception e)
 //                    {
 //                        

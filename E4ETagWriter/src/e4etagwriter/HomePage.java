@@ -25,6 +25,7 @@ public class HomePage extends javax.swing.JFrame {
      */
     EditTagPage etp = new EditTagPage();
     static HomePage hp = new HomePage(); 
+    static Main mainClass = new Main();
     public HomePage() {
         initComponents();
     }
@@ -162,7 +163,7 @@ public class HomePage extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
-        System.out.println("Sending logout request");
+        mainClass.saveLog("Sending logout request");
                 try
                 {
                     HttpRequest getRequest = HttpRequest.newBuilder()
@@ -171,18 +172,18 @@ public class HomePage extends javax.swing.JFrame {
                             .uri(URI.create((lp.URL + lp.logoutRequest + lp.getAccessToken())))
                             .build();
                     HttpClient client = HttpClient.newHttpClient();
-                    System.out.println("logout request prepared");
+                    mainClass.saveLog("logout request prepared");
                     HttpResponse<String> response = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
                     String logoutResp = response.body();
                     //buff = loginResp.toCharArray();
 
-                    System.out.print(getRequest);
-                    System.out.print(logoutResp);
+                    mainClass.saveLog(getRequest.toString());
+                    mainClass.saveLog(logoutResp);
                 }catch(Exception e)
                 {
                     
                 }
-                System.out.println("Exiting from home page");
+                mainClass.saveLog("Exiting from home page");
                 System.exit(0);
     }//GEN-LAST:event_formWindowClosing
 

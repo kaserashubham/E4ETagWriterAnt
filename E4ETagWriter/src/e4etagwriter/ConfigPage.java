@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 public class ConfigPage extends javax.swing.JFrame {
 
     static ConfigPage configPage = new ConfigPage();
+    static Main mainClass = new Main();
     /** Creates new form ConfigPage */
     public ConfigPage() {
         initComponents();

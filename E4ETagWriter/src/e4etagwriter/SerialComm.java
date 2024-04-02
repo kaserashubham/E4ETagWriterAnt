@@ -16,6 +16,7 @@ import java.util.Arrays;
  */
 public class SerialComm {
     static SerialComm commPortParameter = new SerialComm();
+    static Main mainClass = new Main();
     SerialPort availablePorts[];
     static SerialPort selectedPort;
     int baudRate;
@@ -40,12 +41,12 @@ public class SerialComm {
                 //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
                 //recvData = spe.getReceivedData();
                 //respRecv = true;
-                //System.out.print(Arrays.toString(recvData) + " " + recvData.length);
+                //mainClass.saveLog(Arrays.toString(recvData) + " " + recvData.length);
                 
                 //decodeRecvMsg();
                 if (spe.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
                     return;
-                //System.out.println("data read ");
+                //mainClass.saveLog("data read ");
                 int readLen = selectedPort.bytesAvailable();
                 byte[] newData = new byte[readLen];
                 
@@ -53,11 +54,10 @@ public class SerialComm {
                 System.arraycopy(newData, 0, recvData, dataLen, readLen);
                 dataLen += readLen;
                 
-                System.out.println();
-                System.out.println("data read");
+                mainClass.saveLog("data read");
                 for(int i = 0; i < dataLen; i++)
                 {
-                    System.out.print(String.format(" %02X", recvData[i]));
+                    mainClass.saveLog(String.format(" %02X", recvData[i]));
                 }
             }
         });                        
@@ -65,7 +65,7 @@ public class SerialComm {
     
     public static void decodeRecvMsg()
     {
-        //System.out.print("decode message");
+        //mainClass.saveLog("decode message");
         if((recvData[0] & 0xFF) != 0xAA)
         {
             return;
@@ -80,11 +80,11 @@ public class SerialComm {
     public static void response(byte cmd)
     {
         cmd &= 0x7F;
-        //System.out.println("response message" + cmd);
+        //mainClass.saveLog("response message" + cmd);
         switch(cmd) 
         {
             case 0x00:
-                //System.out.println("Read Message");
+                //mainClass.saveLog("Read Message");
                 break;
             case 0x01:
                 break;
