@@ -111,14 +111,8 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="usernameTF">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="support@e4engineer.in"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JPasswordField" name="passwordTF">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="hemesh"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="loginBtn">
           <Properties>

@@ -76,10 +76,6 @@ public class Login extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Password");
 
-        usernameTF.setText("support@e4engineer.in");
-
-        passwordTF.setText("hemesh");
-
         loginBtn.setBackground(new java.awt.Color(136, 180, 67));
         loginBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         loginBtn.setForeground(new java.awt.Color(255, 255, 255));
