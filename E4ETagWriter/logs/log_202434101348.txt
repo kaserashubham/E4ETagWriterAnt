@@ -1,0 +1,26 @@
+2024-04-04T10:14:00.189846100 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-04T10:14:00.191836100 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-04T10:14:00.479067800 : Request : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-04T10:14:00.479067800 : URL : http://34.199.80.64/android_login
+2024-04-04T10:14:00.781261600 : responseBody : <table border="0" cellpadding="4" cellspacing="0"><thead><tr><th>status</th><th>statusMessage</th><th>data</th></tr></thead><tbody><tr><td statusMessage='Success' status='success'></td></tr></tbody></table>
+2024-04-04T10:14:00.782259 : responseBody : <table border="0" cellpadding="4" cellspacing="0"><thead><tr><th>status</th><th>statusMessage</th><th>data</th></tr></thead><tbody><tr><td statusMessage='Success' status='success'></td></tr></tbody></table>
+2024-04-04T10:14:00.783255 : statusIndex : 154
+2024-04-04T10:14:00.783255 : status : Success
+2024-04-04T10:14:00.784253200 : 53 
+2024-04-04T10:14:00.785250600 : 75 
+2024-04-04T10:14:00.785250600 : 63 
+2024-04-04T10:14:00.786247400 : 63 
+2024-04-04T10:14:00.786247400 : 65 
+2024-04-04T10:14:00.787245100 : 73 
+2024-04-04T10:14:00.787245100 : 73 
+2024-04-04T10:14:00.788241900 : credentials correct : true
+2024-04-04T10:14:02.185508100 : http://34.199.80.64/e_fuel_login_req?data=support@e4engineer.in GET
+2024-04-04T10:14:02.186505600 : "1,0sorR1"
+2024-04-04T10:14:02.186505600 : 0sorR1
+2024-04-04T10:14:02.398936400 : Login Successful
+2024-04-04T10:14:02.398936400 : Login Successfull
+2024-04-04T10:14:36.255431700 : Sending logout request
+2024-04-04T10:14:36.257425900 : logout request prepared
+2024-04-04T10:14:37.192923400 : http://34.199.80.64/e_fuel_logout_req?data=0sorR1 GET
+2024-04-04T10:14:37.192923400 : "1"
+2024-04-04T10:14:37.193925900 : Exiting from home page

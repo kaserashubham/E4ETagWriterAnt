@@ -1,0 +1,9 @@
+diff a/E4ETagWriter/src/e4etagwriter/Login.java b/E4ETagWriter/src/e4etagwriter/Login.java	(rejected hunks)
+@@ -77,6 +77,7 @@
+             }
+         });
+ 
++        jPanel2.setBackground(new java.awt.Color(240, 240, 240));
+         jPanel2.setPreferredSize(new java.awt.Dimension(530, 340));
+ 
+         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
