@@ -27,11 +27,12 @@ public class Main {
     final int httpTimeout = 4;
     public static void main(String args[])
     {
-        saveLog("E4Engineer Tag Writer");
+        
         
         FlatLightLaf.setup();
         readConfiguration();
         setLogFileName();
+        saveLog("E4Engineer Tag Writer");
         new Login().setVisible(true);
         
     }
@@ -40,12 +41,12 @@ public class Main {
     {
         Calendar c = Calendar.getInstance();
         logFileName = System.getProperty("user.dir") + "\\logs\\log_" + 
-                            c.get(Calendar.YEAR)   + 
-                            c.get(Calendar.MONTH)  + 
-                            c.get(Calendar.DATE)   + 
-                            c.get(Calendar.HOUR_OF_DAY)   + 
-                            c.get(Calendar.MINUTE) + 
-                            c.get(Calendar.SECOND) + ".txt";
+                            String.format("%04d",c.get(Calendar.YEAR))   + 
+                            String.format("%02d",c.get(Calendar.MONTH))  + 
+                            String.format("%02d",c.get(Calendar.DATE))   + 
+                            String.format("_%02d",c.get(Calendar.HOUR_OF_DAY))   + 
+                            String.format("%02d",c.get(Calendar.MINUTE)) + 
+                            String.format("%02d",c.get(Calendar.SECOND)) + ".txt";
         String dirPath = System.getProperty("user.dir") + "/logs";
         File dir = new File(dirPath);
         if(!dir.exists())
