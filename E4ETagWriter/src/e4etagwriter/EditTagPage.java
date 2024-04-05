@@ -250,11 +250,19 @@ public class EditTagPage extends javax.swing.JFrame {
         }
         catch(java.net.ConnectException e)
         {
-            mainClass.saveLog("No network");
+            mainClass.saveLog(e.toString());
+         
+            //e.printStackTrace();
+            //System.out.println(e.toString());
+            JOptionPane.showMessageDialog(this,"Server Connection Error!\n" + e.toString());
+            return;
         }
         catch(Exception e1) {
                 // TODO Auto-generated catch block
-            e1.printStackTrace();
+            //e1.printStackTrace();
+            mainClass.saveLog(e1.toString());
+            JOptionPane.showMessageDialog(this,"Server Connection Error!\n" +  e1.toString());
+            return;
         }
     }//GEN-LAST:event_refreshBtnActionPerformed
     private char readTag()
@@ -580,7 +588,10 @@ public class EditTagPage extends javax.swing.JFrame {
             */
         }catch(Exception e)
         {
-            
+            mainClass.saveLog(e.toString());
+            JOptionPane.showMessageDialog(this,"Server Connection Error!\n" +  e.toString());
+            retval = 102;
+
         }
         return retval;
     }
@@ -621,7 +632,10 @@ public class EditTagPage extends javax.swing.JFrame {
             */
         }catch(Exception e)
         {
-            
+            mainClass.saveLog(e.toString());
+            JOptionPane.showMessageDialog(this,"Server Connection Error!\n" +  e.toString());
+            retval = 102;
+
         }
         return retval;
     }

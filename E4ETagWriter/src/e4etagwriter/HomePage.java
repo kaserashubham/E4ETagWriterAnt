@@ -15,6 +15,7 @@ import java.time.Duration;
 import javax.swing.JFrame;
 import static e4etagwriter.ConfigPage.configPage;
 import static e4etagwriter.Login.mainClass;
+import javax.swing.JOptionPane;
 /**
  *
  * @author shubham
@@ -179,7 +180,9 @@ public class HomePage extends javax.swing.JFrame {
                     mainClass.saveLog(logoutResp);
                 }catch(Exception e)
                 {
-                    
+                    //JOptionPane.showMessageDialog(this, e.toString());
+                    //retval = 102;
+
                 }
                 mainClass.saveLog("Exiting from home page");
                 System.exit(0);

@@ -5,6 +5,7 @@
 package e4etagwriter;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import static e4etagwriter.EditTagPage.mainClass;
 import static e4etagwriter.HomePage.hp;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -158,6 +159,7 @@ public class Login extends javax.swing.JFrame {
     2 - Wrong Password
     3 - Invalid Email ID
     4 - Other Error
+    5 - Exception
     */
     private char loginAuthenticated()
     {
@@ -185,6 +187,13 @@ public class Login extends javax.swing.JFrame {
             dos.writeBytes(body);
             mainClass.saveLog("Request : " + body);
             mainClass.saveLog("URL : " + url);
+        }catch(Exception e)
+        {
+            //e.printStackTrace();
+            //System.out.println(e.toString());
+            mainClass.saveLog(e.toString());
+            JOptionPane.showMessageDialog(this,"Server Connection Error!\n" +  e.toString());
+            return 5;
         }
 
         try (BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
@@ -193,6 +202,13 @@ public class Login extends javax.swing.JFrame {
                 //mainClass.saveLog(line);
                 responseBody += line;
             }
+        }catch(Exception e)
+        {
+            //e.printStackTrace();
+            //System.out.println(e.toString());
+            
+            //JOptionPane.showMessageDialog(this, e.toString());
+            //return 5;
         }
         mainClass.saveLog("responseBody : " + responseBody);
         mainClass.saveLog("responseBody : " + responseBody);
@@ -290,10 +306,12 @@ public class Login extends javax.swing.JFrame {
                 return 0;
             }
 
-        } catch (Exception e1) {
-                // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch(Exception e)
+        {
+            mainClass.saveLog(e.toString());
+            JOptionPane.showMessageDialog(this,"Server Connection Error!\n" +  e.toString());
             return 2;
+
         }
         
     }
