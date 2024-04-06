@@ -30,8 +30,8 @@ public class Main {
         
         
         FlatLightLaf.setup();
-        readConfiguration();
         setLogFileName();
+        readConfiguration();
         saveLog("E4Engineer Tag Writer");
         new Login().setVisible(true);
         
@@ -71,9 +71,29 @@ public class Main {
 
         }
     }
-    
     public static void readConfiguration()
     {
+        String configFilePath = System.getProperty("user.dir") + "/config.json";
+        File configFile = new File(configFilePath);
+        if(!configFile.exists())
+        {
+            //configFile.mkdir();
+            saveLog("config file not found");
+            try
+            {
+                FileWriter fw = new FileWriter( configFile,true);
+
+                fw.write(   "{\n" +
+                            "	\"Server\" : \"www.fueleye.com\"\n" +
+                            "}");
+                fw.close();
+                saveLog("\nconfig file created with default value");
+            }
+            catch(Exception e)
+            {
+                
+            }
+        }
         JSONParser parser = new JSONParser();
         try {
          Object obj = parser.parse(new FileReader("config.json"));
