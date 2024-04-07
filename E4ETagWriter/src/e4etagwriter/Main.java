@@ -25,6 +25,7 @@ import org.json.simple.parser.JSONParser;
 public class Main {
     private static String logFileName = "";
     final int httpTimeout = 4;
+    final String version = "v1.1.0";
     public static void main(String args[])
     {
         

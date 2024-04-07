@@ -8,6 +8,7 @@ package e4etagwriter;
 import com.fazecast.jSerialComm.SerialPort;
 import static e4etagwriter.HomePage.hp;
 import static e4etagwriter.SerialComm.*;
+import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 /**
  *
@@ -20,7 +21,8 @@ public class ConfigPage extends javax.swing.JFrame {
     /** Creates new form ConfigPage */
     public ConfigPage() {
         initComponents();
-        
+        setTitle("E4E Tag Writer");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("security.png")));
         //commPortCB = SerialPort.getCommPorts();
         commPortCB.removeAllItems();
         commPortParameter.availablePorts = SerialPort.getCommPorts();
