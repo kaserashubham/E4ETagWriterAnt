@@ -1,0 +1,19 @@
+2024-04-06T16:20:02.126117800 : Server: http://www.fueleye.com/
+2024-04-06T16:20:02.126117800 : E4Engineer Tag Writer
+2024-04-06T16:20:12.134536400 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-06T16:20:12.135913500 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-06T16:20:12.185912500 : Request : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-06T16:20:12.185912500 : URL : http://www.fueleye.com/android_login
+2024-04-06T16:20:12.225912800 : responseBody : 
+2024-04-06T16:20:12.225912800 : responseBody : 
+2024-04-06T16:20:12.225912800 : Wrong Response
+2024-04-06T16:20:12.953128400 : http://www.fueleye.com/e_fuel_login_req?data=support@e4engineer.in GET
+2024-04-06T16:20:12.953128400 : "1,K2RsEO"
+2024-04-06T16:20:12.954124400 : K2RsEO
+2024-04-06T16:20:13.137191800 : Login Successful
+2024-04-06T16:20:13.138191100 : Login Successfull
+2024-04-06T16:20:34.825887800 : Sending logout request
+2024-04-06T16:20:34.827881200 : logout request prepared
+2024-04-06T16:20:35.266708 : http://www.fueleye.com/e_fuel_logout_req?data=K2RsEO GET
+2024-04-06T16:20:35.266708 : "1"
+2024-04-06T16:20:35.267705300 : Exiting from home page

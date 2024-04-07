@@ -1,0 +1,7 @@
+2024-04-05T12:18:17.265241200 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-05T12:18:17.266239 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-05T12:18:17.330068300 : Request : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-05T12:18:17.331065200 : URL : http://www.fueleye.com/android_login
+2024-04-05T12:18:18.110949300 : http://www.fueleye.com/e_fuel_login_req?data=support@e4engineer.in GET
+2024-04-05T12:18:18.110949300 : "1,rfbN4E"
+2024-04-05T12:18:18.110949300 : rfbN4E
