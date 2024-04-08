@@ -256,9 +256,13 @@ public class Login extends javax.swing.JFrame {
         statusStr = new String(status).trim();
         mainClass.saveLog("status : " + statusStr);
         byte[] bytes = statusStr.getBytes();
-        for (byte b : bytes) {
-            mainClass.saveLog(String.format("%02X ", b));
+        
+        String req = "";
+        for (byte b : bytes)
+        {
+            req +=(String.format(" %02X", b));
         }
+        mainClass.saveLog(req);
         if(statusStr.equals("Success"))
         {
             mainClass.saveLog("credentials correct : " + statusStr.equals("Success"));

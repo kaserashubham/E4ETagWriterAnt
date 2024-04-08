@@ -324,10 +324,12 @@ public class EditTagPage extends javax.swing.JFrame {
             int readLen = selectedPort.bytesAvailable();
                 int len = selectedPort.readBytes(recvData, readLen);
                 mainClass.saveLog("data read blocking");
+                String req = "";
                 for(int i = 0; i < readLen; i++)
                 {
-                    mainClass.saveLog(String.format(" %02X", recvData[i]));
+                    req +=(String.format(" %02X", recvData[i]));
                 }
+                mainClass.saveLog(req);
                 //now we can decode the complete data;
                 //decode the data and show it to the Dialog box
                 
@@ -388,10 +390,13 @@ public class EditTagPage extends javax.swing.JFrame {
                     i++;
                 }
                 mainClass.saveLog("reg no : ");
+                
+                req = "";
                 for(int j = 0; j < index; j++)
                 {
-                    mainClass.saveLog(String.format("%02X ", tagRegNo[j]));
+                    req +=(String.format(" %02X", tagRegNo[j]));
                 }
+                mainClass.saveLog(req);
                 //mainClass.saveLog();
                 maxFuelLimit = (recvData[i++] & 0xFF);
                 maxFuelLimit |= ((recvData[i++] & 0xFF) << 8);
@@ -404,10 +409,13 @@ public class EditTagPage extends javax.swing.JFrame {
                     uid[index++] = recvData[i++];
                 }
                 mainClass.saveLog("uid : ");
+                
+                req = "";
                 for(int j = 0; j < index; j++)
                 {
-                    mainClass.saveLog(String.format("%02X ", uid[j]));
+                    req +=(String.format(" %02X", uid[j]));
                 }
+                mainClass.saveLog(req);
                 
 //                if((recvData[i++] & 0x7F) != 0x55)
 //                {
@@ -517,10 +525,13 @@ public class EditTagPage extends javax.swing.JFrame {
             int readLen = selectedPort.bytesAvailable();
             int len = selectedPort.readBytes(recvData, readLen);
             mainClass.saveLog("data read blocking");
+            String req = "";
             for (int i = 0; i < readLen; i++) {
-                mainClass.saveLog(String.format(" %02X", recvData[i]));
+                //mainClass.saveLog(String.format(" %02X", recvData[i]));
                 //System.out.print(String.format(" %02X", recvData[i]));
+                req += String.format(" %02X", recvData[i]);
             }
+            mainClass.saveLog(req);
             //now we can decode the complete data;
             return parseWriteTagResp(recvData,readLen);
             //decode the data and show it to the Dialog box
@@ -697,10 +708,12 @@ public class EditTagPage extends javax.swing.JFrame {
         buffer[index++] = (byte) 0x01;
         buffer[index++] = getChecksum(buffer,buffer[1],2); //add checksum function
         buffer[index++] = (byte) 0x55;
+        String req = "";
         for(int i = 0; i < index; i++)
         {
-            mainClass.saveLog(String.format(" %02X", buffer[i]));
+            req +=(String.format(" %02X", buffer[i]));
         }
+        mainClass.saveLog(req);
     }
     private void filter(String query)
     {

@@ -7,6 +7,7 @@ package e4etagwriter;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
+import static e4etagwriter.Login.mainClass;
 import static e4etagwriter.SerialComm.recvData;
 import java.util.Arrays;
 
@@ -20,7 +21,7 @@ public class SerialComm {
     SerialPort availablePorts[];
     static SerialPort selectedPort;
     int baudRate;
-    final int READ_TIMEOUT = 2000;
+    final int READ_TIMEOUT = 5000;
     static byte recvData[] = new byte[100];
     static boolean respRecv = false;
     static boolean deviceConnected = false;
@@ -55,10 +56,13 @@ public class SerialComm {
                 dataLen += readLen;
                 
                 mainClass.saveLog("data read");
+                
+                String req = "";
                 for(int i = 0; i < dataLen; i++)
                 {
-                    mainClass.saveLog(String.format(" %02X", recvData[i]));
+                    req +=(String.format(" %02X", recvData[i]));
                 }
+                mainClass.saveLog(req);
             }
         });                        
     }
