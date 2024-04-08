@@ -231,7 +231,14 @@ public class EditTagPage extends javax.swing.JFrame {
             
             int noOfVehicle = 0;
             
-            
+            if(vehicleListResp.charAt(1) == '0')
+            {
+                mainClass.saveLog("Session Expired");
+                JOptionPane.showMessageDialog(this, "Session Expired, Please Login Again", 
+                                          "INFORMATION", 
+                                          JOptionPane.INFORMATION_MESSAGE);
+                return ;
+            }
             for(int i = 0; i < vehicleListResp.length(); i++)
             {
                 if(vehicleListResp.charAt(i) == ',')
@@ -451,13 +458,23 @@ public class EditTagPage extends javax.swing.JFrame {
         }
 
         mainClass.saveLog("first response ok");
-
+//        i++;
+//        for(;(recvData[i]&0xFF) != 0xAA;i++)
+//        {
+//            if(i>readLen)
+//            {
+//                mainClass.saveLog("second header not found, length crossed");
+//                return 0;
+//            }
+//        }
         if((recvData[i++]&0xFF) != 0xAA)
         {
             mainClass.saveLog("second header not found");
             return 0;
         }
-        length = (recvData[i++] & 0xFF);
+//        length = (recvData[i++] & 0xFF);
+//        mainClass.saveLog("length :" + length);
+//        mainClass.saveLog("response code :" + String.format("%02X",recvData[i]));
         if(((recvData[i++] & 0x7F) != 0x01))
         {
             mainClass.saveLog("second invalid response code");
@@ -502,6 +519,7 @@ public class EditTagPage extends javax.swing.JFrame {
             mainClass.saveLog("data read blocking");
             for (int i = 0; i < readLen; i++) {
                 mainClass.saveLog(String.format(" %02X", recvData[i]));
+                //System.out.print(String.format(" %02X", recvData[i]));
             }
             //now we can decode the complete data;
             return parseWriteTagResp(recvData,readLen);
