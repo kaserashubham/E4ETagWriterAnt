@@ -8,8 +8,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import static e4etagwriter.HomePage.hp;
 import static e4etagwriter.SerialComm.commPortParameter;
 import static e4etagwriter.Login.lp;
-import static e4etagwriter.Login.mainClass;
 import static e4etagwriter.SerialComm.dataLen;
+import static e4etagwriter.SerialComm.mainClass;
 import static e4etagwriter.SerialComm.recvData;
 import static e4etagwriter.SerialComm.selectedPort;
 import java.awt.Toolkit;
@@ -19,7 +19,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -194,12 +193,13 @@ public class EditTagPage extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(epVerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5)))
+                        .addComponent(jLabel5))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel4)))
                 .addContainerGap())
         );
 
@@ -512,6 +512,7 @@ public class EditTagPage extends javax.swing.JFrame {
     */
     private char writeTag()
     {
+        mainClass.saveLog("WRITE TAG");
         //char retval = 0;
         if((commPortParameter.selectedPort == null) || (!commPortParameter.deviceConnected))
         {
@@ -521,24 +522,52 @@ public class EditTagPage extends javax.swing.JFrame {
         commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
-        if (commPortParameter.selectedPort.bytesAvailable() > 0) {
+        
+        if(selectedPort.bytesAvailable() > 0)
+        {
             int readLen = selectedPort.bytesAvailable();
-            int len = selectedPort.readBytes(recvData, readLen);
-            mainClass.saveLog("data read blocking");
+            byte[] newData = new byte[readLen];
+            System.out.println("readLen :" + readLen);
+            selectedPort.readBytes(newData, readLen);
+            System.arraycopy(newData, 0, recvData, dataLen, readLen);
+            dataLen += readLen;
+            
             String req = "";
-            for (int i = 0; i < readLen; i++) {
-                //mainClass.saveLog(String.format(" %02X", recvData[i]));
-                //System.out.print(String.format(" %02X", recvData[i]));
-                req += String.format(" %02X", recvData[i]);
+            for(int i = 0; i < dataLen; i++)
+            {
+                req +=(String.format(" %02X", recvData[i]));
             }
-            mainClass.saveLog(req);
-            //now we can decode the complete data;
-            return parseWriteTagResp(recvData,readLen);
-            //decode the data and show it to the Dialog box
-        } else {
-            mainClass.saveLog("No data avl");
-            return 3;
+            //mainClass.saveLog(req);
+            System.out.println(req);
         }
+        if(dataLen == 0)
+        {
+           mainClass.saveLog("No data avl");
+           System.out.println("No data avl");
+            return 3; 
+        }
+        return parseWriteTagResp(recvData,dataLen);
+        
+//        if (commPortParameter.selectedPort.bytesAvailable() > 0) {
+//            
+//            int readLen = selectedPort.bytesAvailable();
+//            
+//            int len = selectedPort.readBytes(recvData, readLen);
+//            mainClass.saveLog("data read blocking");
+//            String req = "";
+//            for (int i = 0; i < readLen; i++) {
+//                //mainClass.saveLog(String.format(" %02X", recvData[i]));
+//                //System.out.print(String.format(" %02X", recvData[i]));
+//                req += String.format(" %02X", recvData[i]);
+//            }
+//            mainClass.saveLog(req);
+//            //now we can decode the complete data;
+//            return parseWriteTagResp(recvData,readLen);
+//            //decode the data and show it to the Dialog box
+//        } else {
+//            mainClass.saveLog("No data avl");
+//            return 3;
+//        }
     }
     private void readBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readBtnActionPerformed
         switch(readTag())
