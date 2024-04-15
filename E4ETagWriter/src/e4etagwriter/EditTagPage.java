@@ -19,6 +19,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -319,117 +321,151 @@ public class EditTagPage extends javax.swing.JFrame {
         commPortParameter.selectedPort.writeBytes(buffer, index);
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
-        if(commPortParameter.selectedPort.bytesAvailable() > 0)
+        
+        int timeout = 0;
+        //if(commPortParameter.selectedPort.bytesAvailable() > 0)
+        while(true)
         {
             int readLen = selectedPort.bytesAvailable();
-                int len = selectedPort.readBytes(recvData, readLen);
-                mainClass.saveLog("data read blocking");
+            if(readLen <= 0)
+            {
+                try {
+                    Thread.sleep(1);
+                    if(++timeout > commPortParameter.READ_WAIT_TIMEOUT)
+                    {
+                        timeout = 0;
+                        mainClass.saveLog("Data recv Timeout");
+                        break;
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(EditTagPage.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else
+            {
+                timeout = 0;
+                byte[] newData = new byte[readLen];
+                mainClass.saveLog("readLen :" + readLen);
+                selectedPort.readBytes(newData, readLen);
+                System.arraycopy(newData, 0, recvData, dataLen, readLen);
+                dataLen += readLen;
+                //int len = selectedPort.readBytes(recvData, readLen);
                 String req = "";
-                for(int i = 0; i < readLen; i++)
+                for(int i = 0; i < dataLen; i++)
                 {
                     req +=(String.format(" %02X", recvData[i]));
                 }
+                //mainClass.saveLog(req);
                 mainClass.saveLog(req);
-                //now we can decode the complete data;
-                //decode the data and show it to the Dialog box
-                
-                int i = 0;
-                if((recvData[i++]&0xFF) != 0xAA)
-                {
-                    mainClass.saveLog("header not found");
-                    return 0;
-                }
-                length = (recvData[i++] & 0xFF);
-                if((recvData[i++] & 0x7F) != 0x00)
-                {
-                    mainClass.saveLog("invalid response code");
-                    return 0;
-                }
-                if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
-                {
-                    mainClass.saveLog("nack");
-                    return 0;
-                }
-                i++;//skipping checksum
-                if((recvData[i++] & 0x7F) != 0x55)
-                {
-                    mainClass.saveLog("no footer");
-                    return 0;
-                }
-                
-                mainClass.saveLog("first response ok");
-                
-                if((recvData[i++]&0xFF) != 0xAA)
-                {
-                    mainClass.saveLog("second header not found");
-                    return 0;
-                }
-                length = (recvData[i++] & 0xFF);
-                if(((recvData[i++] & 0x7F) != 0x00))
-                {
-                    mainClass.saveLog("second invalid response code");
-                    return 0;
-                }
-                
-                if(((recvData[i] & 0x7F) == 0x14))
-                {
-                    mainClass.saveLog("no tag found");
-                    
-                    return 1;
-                }
-                mainClass.saveLog("tag found " + String.format("%02X", recvData[i]));
-                //System.arraycopy(recvData, i, regNo, 0, 10);
-                index = 0;
-                for(int j = 0; j < 10; j++)
-                {
-                    //if((recvData[i]) != '@')
-                    if(Character.isAlphabetic(recvData[i]) || Character.isDigit(recvData[i]))
-                    {
-                        tagRegNo[index++] = recvData[i];
-                    }
-                    i++;
-                }
-                mainClass.saveLog("reg no : ");
-                
-                req = "";
-                for(int j = 0; j < index; j++)
-                {
-                    req +=(String.format(" %02X", tagRegNo[j]));
-                }
-                mainClass.saveLog(req);
-                //mainClass.saveLog();
-                maxFuelLimit = (recvData[i++] & 0xFF);
-                maxFuelLimit |= ((recvData[i++] & 0xFF) << 8);
-                mainClass.saveLog("fuel limit : " + maxFuelLimit);
-                
-                i += 4;
-                index = 0;
-                for(int j = 0; j < 7; j++)
-                {
-                    uid[index++] = recvData[i++];
-                }
-                mainClass.saveLog("uid : ");
-                
-                req = "";
-                for(int j = 0; j < index; j++)
-                {
-                    req +=(String.format(" %02X", uid[j]));
-                }
-                mainClass.saveLog(req);
-                
-//                if((recvData[i++] & 0x7F) != 0x55)
-//                {
-//                    mainClass.saveLog("no footer");
-//                    return;
-//                }
-                    return 3;
+                selectedPort.flushIOBuffers();
+            }
         }
-        else
+        if(dataLen == 0)
         {
             mainClass.saveLog("No data avl");
             
             return 2;
         }
+        //now we can decode the complete data;
+        //decode the data and show it to the Dialog box
+
+        int i = 0;
+        if((recvData[i++]&0xFF) != 0xAA)
+        {
+            mainClass.saveLog("header not found");
+            return 0;
+        }
+        length = (recvData[i++] & 0xFF);
+        if((recvData[i++] & 0x7F) != 0x00)
+        {
+            mainClass.saveLog("invalid response code");
+            return 0;
+        }
+        if((length == 0x02) && ((recvData[i++] & 0x7F) != 0x03))
+        {
+            mainClass.saveLog("nack");
+            return 0;
+        }
+        i++;//skipping checksum
+        if((recvData[i++] & 0x7F) != 0x55)
+        {
+            mainClass.saveLog("no footer");
+            return 0;
+        }
+
+        mainClass.saveLog("first response ok");
+
+        if((recvData[i++]&0xFF) != 0xAA)
+        {
+            mainClass.saveLog("second header not found");
+            return 0;
+        }
+        length = (recvData[i++] & 0xFF);
+        if(((recvData[i++] & 0x7F) != 0x00))
+        {
+            mainClass.saveLog("second invalid response code");
+            return 0;
+        }
+
+        if(((recvData[i] & 0x7F) == 0x14))
+        {
+            mainClass.saveLog("no tag found");
+
+            return 1;
+        }
+        mainClass.saveLog("tag found " + String.format("%02X", recvData[i]));
+        //System.arraycopy(recvData, i, regNo, 0, 10);
+        index = 0;
+        for(int j = 0; j < 10; j++)
+        {
+            //if((recvData[i]) != '@')
+            if(Character.isAlphabetic(recvData[i]) || Character.isDigit(recvData[i]))
+            {
+                tagRegNo[index++] = recvData[i];
+            }
+            i++;
+        }
+        mainClass.saveLog("reg no : ");
+
+        String req = "";
+        for(int j = 0; j < index; j++)
+        {
+            req +=(String.format(" %02X", tagRegNo[j]));
+        }
+        mainClass.saveLog(req);
+        //mainClass.saveLog();
+        maxFuelLimit = (recvData[i++] & 0xFF);
+        maxFuelLimit |= ((recvData[i++] & 0xFF) << 8);
+        mainClass.saveLog("fuel limit : " + maxFuelLimit);
+
+        i += 4;
+        index = 0;
+        for(int j = 0; j < 7; j++)
+        {
+            uid[index++] = recvData[i++];
+        }
+        mainClass.saveLog("uid : ");
+
+        req = "";
+        for(int j = 0; j < index; j++)
+        {
+            req +=(String.format(" %02X", uid[j]));
+        }
+        mainClass.saveLog(req);
+
+//                if((recvData[i++] & 0x7F) != 0x55)
+//                {
+//                    mainClass.saveLog("no footer");
+//                    return;
+//                }
+        return 3;
+//        }
+//        else
+//        {
+//            mainClass.saveLog("No data avl");
+//            
+//            return 2;
+//        }
         
         //return retval;
     }
@@ -466,21 +502,21 @@ public class EditTagPage extends javax.swing.JFrame {
         }
 
         mainClass.saveLog("first response ok");
-//        i++;
-//        for(;(recvData[i]&0xFF) != 0xAA;i++)
-//        {
-//            if(i>readLen)
-//            {
-//                mainClass.saveLog("second header not found, length crossed");
-//                return 0;
-//            }
-//        }
+        //i++;
+        for(;(recvData[i]&0xFF) != 0xAA;i++)
+        {
+            if(i>readLen)
+            {
+                mainClass.saveLog("second header not found, length crossed");
+                return 0;
+            }
+        }
         if((recvData[i++]&0xFF) != 0xAA)
         {
             mainClass.saveLog("second header not found");
             return 0;
         }
-//        length = (recvData[i++] & 0xFF);
+        length = (recvData[i++] & 0xFF);
 //        mainClass.saveLog("length :" + length);
 //        mainClass.saveLog("response code :" + String.format("%02X",recvData[i]));
         if(((recvData[i++] & 0x7F) != 0x01))
@@ -523,27 +559,49 @@ public class EditTagPage extends javax.swing.JFrame {
         commPortParameter.dataLen = 0;
         commPortParameter.selectedPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, commPortParameter.READ_TIMEOUT, 0);
         
-        if(selectedPort.bytesAvailable() > 0)
+        //int readLen = selectedPort.bytesAvailable();
+        int timeout = 0;
+        while(true)
         {
-            int readLen = selectedPort.bytesAvailable();
-            byte[] newData = new byte[readLen];
-            System.out.println("readLen :" + readLen);
-            selectedPort.readBytes(newData, readLen);
-            System.arraycopy(newData, 0, recvData, dataLen, readLen);
-            dataLen += readLen;
             
-            String req = "";
-            for(int i = 0; i < dataLen; i++)
+            int readLen = selectedPort.bytesAvailable();
+            if(readLen <= 0)
             {
-                req +=(String.format(" %02X", recvData[i]));
+                try {
+                    Thread.sleep(1);
+                    if(++timeout > commPortParameter.READ_WAIT_TIMEOUT)
+                    {
+                        timeout = 0;
+                        mainClass.saveLog("Data recv Timeout");
+                        break;
+                    }
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(EditTagPage.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-            //mainClass.saveLog(req);
-            System.out.println(req);
+            else
+            {
+                timeout = 0;
+                byte[] newData = new byte[readLen];
+                mainClass.saveLog("readLen :" + readLen);
+                selectedPort.readBytes(newData, readLen);
+                System.arraycopy(newData, 0, recvData, dataLen, readLen);
+                dataLen += readLen;
+
+                String req = "";
+                for(int i = 0; i < dataLen; i++)
+                {
+                    req +=(String.format(" %02X", recvData[i]));
+                }
+                //mainClass.saveLog(req);
+                mainClass.saveLog(req);
+                selectedPort.flushIOBuffers();
+            }
         }
         if(dataLen == 0)
         {
            mainClass.saveLog("No data avl");
-           System.out.println("No data avl");
+           mainClass.saveLog("No data avl");
             return 3; 
         }
         return parseWriteTagResp(recvData,dataLen);
