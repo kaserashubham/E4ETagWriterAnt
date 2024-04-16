@@ -9,7 +9,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import static e4etagwriter.HomePage.hp;
 import static e4etagwriter.SerialComm.*;
 import java.awt.Toolkit;
-import javax.swing.JOptionPane;
 /**
  *
  * @author shubham
@@ -24,14 +23,18 @@ public class ConfigPage extends javax.swing.JFrame {
         setTitle("E4E Tag Writer");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("security.png")));
         //commPortCB = SerialPort.getCommPorts();
+        refreshPort();
+    }
+    private void refreshPort()
+    {
         commPortCB.removeAllItems();
         commPortParameter.availablePorts = SerialPort.getCommPorts();
         for(SerialPort S : commPortParameter.availablePorts)
         {
             commPortCB.addItem(S);
+            System.out.println( S.getSystemPortName());
         }
     }
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -200,12 +203,8 @@ public class ConfigPage extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void refreshPortBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshPortBtnActionPerformed
-        commPortCB.removeAllItems();
-        commPortParameter.availablePorts = SerialPort.getCommPorts();
-        for(SerialPort S : commPortParameter.availablePorts)
-        {
-            commPortCB.addItem(S);
-        }
+        
+        refreshPort();
     }//GEN-LAST:event_refreshPortBtnActionPerformed
     /**
      * @param args the command line arguments

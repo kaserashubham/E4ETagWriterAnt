@@ -22,7 +22,8 @@ public class SerialComm {
     static SerialPort selectedPort;
     int baudRate;
     final int READ_TIMEOUT = 100;
-    final int READ_WAIT_TIMEOUT = 100;
+    final int READ_WAIT_TIMEOUT = 30;
+    final int DELAY = 10;
     static byte recvData[] = new byte[100];
     static boolean respRecv = false;
     static boolean deviceConnected = false;

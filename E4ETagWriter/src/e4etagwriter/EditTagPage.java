@@ -330,7 +330,7 @@ public class EditTagPage extends javax.swing.JFrame {
             if(readLen <= 0)
             {
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(commPortParameter.DELAY);
                     if(++timeout > commPortParameter.READ_WAIT_TIMEOUT)
                     {
                         timeout = 0;
@@ -568,7 +568,7 @@ public class EditTagPage extends javax.swing.JFrame {
             if(readLen <= 0)
             {
                 try {
-                    Thread.sleep(1);
+                    Thread.sleep(commPortParameter.DELAY);
                     if(++timeout > commPortParameter.READ_WAIT_TIMEOUT)
                     {
                         timeout = 0;
