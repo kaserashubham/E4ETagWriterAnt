@@ -1,0 +1,12 @@
+2024-04-16T18:51:27.204905400 : Server: http://fueleye.com/
+2024-04-16T18:51:27.228683700 : E4Engineer Tag Writer
+2024-04-16T18:51:34.866109300 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-16T18:51:34.866109300 : Request body : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-16T18:51:35.020384700 : Request : {"email": "support@e4engineer.in","password": "hemesh"}
+2024-04-16T18:51:35.020384700 : URL : http://fueleye.com/android_login
+2024-04-16T18:51:35.062271300 : responseBody : 
+2024-04-16T18:51:35.062271300 : responseBody : 
+2024-04-16T18:51:35.062271300 : Wrong Response
+2024-04-16T18:51:36.140496700 : http://fueleye.com/e_fuel_login_req?data=support@e4engineer.in GET
+2024-04-16T18:51:36.140496700 : "1,iVzfGW"
+2024-04-16T18:51:36.141493800 : iVzfGW
